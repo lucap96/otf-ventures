@@ -9,6 +9,7 @@ interface AuthContextType {
   loading: boolean;
   roleLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  requestPasswordReset: (email: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
 
@@ -173,8 +174,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setRoleLoading(false);
   };
 
+  const requestPasswordReset = async (email: string) => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      return { error: { message: 'Please enter your email address.' } };
+    }
+
+    const redirectTo = `${window.location.origin}/reset-password`;
+    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, { redirectTo });
+    return { error };
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, loading, roleLoading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, isAdmin, loading, roleLoading, signIn, requestPasswordReset, signOut }}>
       {children}
     </AuthContext.Provider>
   );

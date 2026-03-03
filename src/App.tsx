@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AppLayout from "@/components/AppLayout";
 import Login from "@/pages/Login";
 import AcceptInvite from "@/pages/AcceptInvite";
+import ResetPassword from "@/pages/ResetPassword";
 import Index from "@/pages/Index";
 import Operators from "@/pages/Operators";
 import AdminAnalytics from "@/pages/AdminAnalytics";
@@ -26,6 +27,7 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/accept-invite" element={<AcceptInvite />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/" element={<Index />} />
               <Route path="/operators" element={<Operators />} />

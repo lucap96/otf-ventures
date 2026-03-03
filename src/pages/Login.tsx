@@ -7,11 +7,13 @@ import { Label } from '@/components/ui/label';
 import { Lock, Mail } from 'lucide-react';
 
 export default function Login() {
-  const { user, loading, signIn } = useAuth();
+  const { user, loading, signIn, requestPasswordReset } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [resetSubmitting, setResetSubmitting] = useState(false);
+  const [resetMessage, setResetMessage] = useState('');
 
   if (loading) {
     return (
@@ -26,10 +28,25 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setResetMessage('');
     setSubmitting(true);
     const { error } = await signIn(email, password);
     if (error) setError(error.message);
     setSubmitting(false);
+  };
+
+  const handleResetPassword = async () => {
+    setError('');
+    setResetMessage('');
+    setResetSubmitting(true);
+    const { error } = await requestPasswordReset(email);
+    if (error) {
+      setError(error.message);
+      setResetSubmitting(false);
+      return;
+    }
+    setResetMessage('If an account exists for this email, a reset link has been sent.');
+    setResetSubmitting(false);
   };
 
   return (
@@ -90,10 +107,23 @@ export default function Login() {
                   required
                 />
               </div>
+              <div className="flex justify-end">
+                <button
+                  type="button"
+                  onClick={handleResetPassword}
+                  className="text-xs font-body text-primary hover:underline disabled:opacity-60"
+                  disabled={resetSubmitting || submitting}
+                >
+                  {resetSubmitting ? 'Sending reset link…' : 'Forgot password?'}
+                </button>
+              </div>
             </div>
 
             {error && (
               <p className="text-sm text-destructive font-body">{error}</p>
+            )}
+            {resetMessage && (
+              <p className="text-sm text-foreground font-body">{resetMessage}</p>
             )}
 
             <Button type="submit" className="w-full font-display font-bold tracking-wider uppercase" disabled={submitting}>

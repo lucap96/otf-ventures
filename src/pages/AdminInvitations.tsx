@@ -26,6 +26,7 @@ export default function AdminInvitations() {
   const [submitting, setSubmitting] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [actionError, setActionError] = useState('');
+  const [manualInviteLink, setManualInviteLink] = useState('');
 
   const getFunctionErrorMessage = async (error: unknown) => {
     if (typeof error === 'object' && error !== null) {
@@ -79,6 +80,7 @@ export default function AdminInvitations() {
     if (!newEmail.trim() || !user) return;
     setSubmitting(true);
     setActionError('');
+    setManualInviteLink('');
 
     const normalizedEmail = newEmail.trim().toLowerCase();
     const { data: sessionData } = await supabase.auth.getSession();
@@ -104,12 +106,17 @@ export default function AdminInvitations() {
 
     if (error) {
       const message = await getFunctionErrorMessage(error);
+      const normalizedMessage = message.toLowerCase();
       if (error.code === '23505') {
         toast.error('This email has already been invited.');
       } else if (error.code === '42501') {
         const message = 'You do not have permission to send invites. Ensure your user has the admin role.';
         setActionError(message);
         toast.error(message);
+      } else if (normalizedMessage.includes('error sending invite email')) {
+        const guidance = 'Supabase could not send the invite email. Check Auth > Email provider and make sure your app URL (including /accept-invite) is allowed in Auth URL settings.';
+        setActionError(guidance);
+        toast.error(guidance);
       } else {
         setActionError(message);
         toast.error(message);
@@ -120,11 +127,26 @@ export default function AdminInvitations() {
       toast.error(message);
     } else {
       setInvitations((prev) => [{ ...data.invitation, role: data.invitation.role ?? inviteRole }, ...prev.filter((inv) => inv.email !== data.invitation.email)]);
-      toast.success(`Invitation email sent to ${normalizedEmail}`);
+      if (data.emailSent === false && typeof data.inviteLink === 'string') {
+        setManualInviteLink(data.inviteLink);
+        toast.warning('Invite created, but email delivery failed. Share the manual invite link below.');
+      } else {
+        toast.success(`Invitation email sent to ${normalizedEmail}`);
+      }
       setNewEmail('');
       setInviteRole('user');
     }
     setSubmitting(false);
+  };
+
+  const handleCopyManualInviteLink = async () => {
+    if (!manualInviteLink) return;
+    try {
+      await navigator.clipboard.writeText(manualInviteLink);
+      toast.success('Manual invite link copied.');
+    } catch {
+      toast.error('Unable to copy invite link. Copy it manually.');
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -231,6 +253,24 @@ export default function AdminInvitations() {
           </div>
           {actionError && (
             <p className="mt-3 text-sm text-destructive font-body">{actionError}</p>
+          )}
+          {manualInviteLink && (
+            <div className="mt-4 space-y-2">
+              <Label htmlFor="manual-invite-link" className="text-xs uppercase tracking-wider font-body font-semibold text-muted-foreground">
+                Manual Invite Link
+              </Label>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Input
+                  id="manual-invite-link"
+                  value={manualInviteLink}
+                  readOnly
+                  className="font-body"
+                />
+                <Button type="button" variant="secondary" onClick={handleCopyManualInviteLink}>
+                  Copy Link
+                </Button>
+              </div>
+            </div>
           )}
         </form>
 
