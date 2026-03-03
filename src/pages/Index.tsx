@@ -1,6 +1,3 @@
-import { useEffect } from 'react';
-import { useAnalytics } from '@/hooks/useAnalytics';
-
 const coverStats = [
   { value: '$1.2B+', label: 'Raised collectively' },
   { value: '3,000+', label: 'People hired' },
@@ -8,18 +5,12 @@ const coverStats = [
 ];
 
 export default function Index() {
-  const { trackPageView } = useAnalytics();
-
-  useEffect(() => {
-    trackPageView('dataroom_cover');
-  }, []);
-
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="decorative-circle-lg" />
       <div className="decorative-circle-sm" />
 
-      <div className="max-w-4xl mx-auto px-8 py-16 relative z-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-12 sm:py-16 relative z-10">
         {/* Header */}
         <div className="mb-20 animate-fade-in">
           <div className="font-display text-xs font-bold tracking-[3px] uppercase text-primary mb-1">
@@ -35,7 +26,7 @@ export default function Index() {
           <div className="text-[11px] font-semibold tracking-[3px] uppercase text-primary mb-5 font-body">
             The people behind the access
           </div>
-          <h1 className="font-display text-5xl md:text-6xl font-extrabold text-foreground leading-[1.04] tracking-tight mb-6">
+          <h1 className="font-display text-4xl sm:text-5xl md:text-6xl font-extrabold text-foreground leading-[1.04] tracking-tight mb-6">
             The<br />
             <span className="text-primary">{'{Ωperators}'}</span>
           </h1>
@@ -53,7 +44,7 @@ export default function Index() {
         </div>
 
         {/* Stats */}
-        <div className="flex animate-fade-in" style={{ animationDelay: '200ms' }}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 animate-fade-in" style={{ animationDelay: '200ms' }}>
           {coverStats.map((stat, i) => (
             <div key={i} className="stat-card flex-1">
               <div className="font-display text-2xl font-extrabold text-primary">{stat.value}</div>

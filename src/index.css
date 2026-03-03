@@ -128,3 +128,14 @@
     @apply absolute -top-20 -right-20 w-[280px] h-[280px] rounded-full border border-primary/25 pointer-events-none;
   }
 }
+
+/* Gate mount animations to route-entry only, so async data updates do not replay them. */
+.animate-fade-in {
+  animation: none !important;
+  opacity: 1;
+  transform: none;
+}
+
+.page-entering .animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards !important;
+}

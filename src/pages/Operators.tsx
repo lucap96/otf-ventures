@@ -1,22 +1,15 @@
-import { useEffect } from 'react';
-import { useAnalytics } from '@/hooks/useAnalytics';
+import { Fragment } from 'react';
 import OperatorCard from '@/components/OperatorCard';
 import { operators, capabilityMatrix } from '@/data/operators';
 import { cn } from '@/lib/utils';
 
 export default function Operators() {
-  const { trackPageView } = useAnalytics();
-
-  useEffect(() => {
-    trackPageView('operators');
-  }, []);
-
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="decorative-circle-lg" />
       <div className="decorative-circle-sm" />
 
-      <div className="max-w-4xl mx-auto px-8 py-12 relative z-10">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-12 relative z-10">
         <div className="page-header">
           <div className="font-display text-xs font-bold tracking-[3px] text-primary uppercase">OTF Ventures</div>
           <div className="text-[10px] text-muted-foreground tracking-[1.5px] uppercase font-body">Operators</div>
@@ -55,7 +48,7 @@ export default function Operators() {
               </thead>
               <tbody>
                 {capabilityMatrix.sections.map((section, si) => (
-                  <>
+                  <Fragment key={`section-${si}`}>
                     <tr key={`section-${si}`}>
                       <td
                         colSpan={5}
@@ -80,7 +73,7 @@ export default function Operators() {
                         ))}
                       </tr>
                     ))}
-                  </>
+                  </Fragment>
                 ))}
               </tbody>
             </table>

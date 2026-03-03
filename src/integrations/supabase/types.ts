@@ -17,6 +17,7 @@ export type Database = {
       analytics_events: {
         Row: {
           created_at: string
+          document_id: string | null
           event_type: string
           id: string
           metadata: Json | null
@@ -24,6 +25,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          document_id?: string | null
           event_type: string
           id?: string
           metadata?: Json | null
@@ -31,6 +33,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          document_id?: string | null
           event_type?: string
           id?: string
           metadata?: Json | null
@@ -75,6 +78,7 @@ export type Database = {
           email: string
           id: string
           invited_by: string | null
+          role: Database["public"]["Enums"]["app_role"]
         }
         Insert: {
           accepted?: boolean
@@ -82,6 +86,7 @@ export type Database = {
           email: string
           id?: string
           invited_by?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
         }
         Update: {
           accepted?: boolean
@@ -89,6 +94,7 @@ export type Database = {
           email?: string
           id?: string
           invited_by?: string | null
+          role?: Database["public"]["Enums"]["app_role"]
         }
         Relationships: []
       }
@@ -139,6 +145,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      claim_invitation_role: {
+        Args: Record<PropertyKey, never>
+        Returns: Database["public"]["Enums"]["app_role"]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

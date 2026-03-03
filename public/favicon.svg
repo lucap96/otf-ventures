@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="faviconTitle">
+  <title id="faviconTitle">OTF Ventures</title>
+  <defs>
+    <linearGradient id="otfBlue" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2B72EB" />
+      <stop offset="1" stop-color="#1A4FC1" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#otfBlue)" />
+  <circle cx="21" cy="32" r="10" fill="none" stroke="#FFFFFF" stroke-width="5.5" />
+  <rect x="31" y="19" width="24" height="5.5" rx="2.75" fill="#FFFFFF" />
+  <rect x="40.25" y="24.5" width="5.5" height="20.5" rx="2.75" fill="#FFFFFF" />
+  <rect x="40.25" y="32.75" width="11.5" height="5.5" rx="2.75" fill="#FFFFFF" />
+</svg>

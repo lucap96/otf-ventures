@@ -4,6 +4,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { Mail, Check, Plus, Trash2, UserPlus } from 'lucide-react';
 import { format } from 'date-fns';
@@ -12,6 +13,7 @@ interface Invitation {
   id: string;
   email: string;
   accepted: boolean;
+  role: 'admin' | 'user';
   created_at: string;
 }
 
@@ -19,54 +21,147 @@ export default function AdminInvitations() {
   const { user } = useAuth();
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [newEmail, setNewEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState<'admin' | 'user'>('user');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [actionError, setActionError] = useState('');
+
+  const getFunctionErrorMessage = async (error: unknown) => {
+    if (typeof error === 'object' && error !== null) {
+      const maybeContext = (error as { context?: unknown }).context;
+      if (typeof maybeContext === 'string' && maybeContext.trim()) {
+        return maybeContext;
+      }
+      if (maybeContext && typeof maybeContext === 'object' && 'json' in maybeContext) {
+        try {
+          const payload = await (maybeContext as { json: () => Promise<{ error?: string; message?: string }> }).json();
+          if (payload?.error) return payload.error;
+          if (payload?.message) return payload.message;
+        } catch {
+          // ignore parse errors, fallback below
+        }
+      }
+
+      const maybeMessage = (error as { message?: unknown }).message;
+      if (typeof maybeMessage === 'string' && maybeMessage.trim()) {
+        return maybeMessage;
+      }
+    }
+    return 'Request failed.';
+  };
 
   useEffect(() => {
     fetchInvitations();
   }, []);
 
   const fetchInvitations = async () => {
-    const { data } = await supabase
-      .from('invitations')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (data) setInvitations(data);
-    setLoading(false);
+    try {
+      const { data, error } = await supabase
+        .from('invitations')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        setActionError(error.message);
+        toast.error(`Failed to load invitations: ${error.message}`);
+        return;
+      }
+
+      setInvitations(data ?? []);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleInvite = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newEmail.trim() || !user) return;
     setSubmitting(true);
+    setActionError('');
 
-    const { error } = await supabase.from('invitations').insert({
-      email: newEmail.trim().toLowerCase(),
-      invited_by: user.id,
+    const normalizedEmail = newEmail.trim().toLowerCase();
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+    if (!accessToken) {
+      const message = 'Your session expired. Please sign in again.';
+      setActionError(message);
+      toast.error(message);
+      setSubmitting(false);
+      return;
+    }
+
+    const { data, error } = await supabase.functions.invoke('send-invitation', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: {
+        email: normalizedEmail,
+        role: inviteRole,
+        redirectTo: `${window.location.origin}/accept-invite`,
+      },
     });
 
     if (error) {
+      const message = await getFunctionErrorMessage(error);
       if (error.code === '23505') {
         toast.error('This email has already been invited.');
+      } else if (error.code === '42501') {
+        const message = 'You do not have permission to send invites. Ensure your user has the admin role.';
+        setActionError(message);
+        toast.error(message);
       } else {
-        toast.error(error.message);
+        setActionError(message);
+        toast.error(message);
       }
+    } else if (!data?.invitation) {
+      const message = 'Invite request completed but no invitation was returned.';
+      setActionError(message);
+      toast.error(message);
     } else {
-      toast.success(`Invitation sent to ${newEmail}`);
+      setInvitations((prev) => [{ ...data.invitation, role: data.invitation.role ?? inviteRole }, ...prev.filter((inv) => inv.email !== data.invitation.email)]);
+      toast.success(`Invitation email sent to ${normalizedEmail}`);
       setNewEmail('');
-      fetchInvitations();
+      setInviteRole('user');
     }
     setSubmitting(false);
   };
 
   const handleDelete = async (id: string) => {
-    const { error } = await supabase.from('invitations').delete().eq('id', id);
-    if (error) {
-      toast.error(error.message);
-    } else {
-      toast.success('Invitation removed');
-      fetchInvitations();
+    if (!user) return;
+    setDeletingId(id);
+    setActionError('');
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+    if (!accessToken) {
+      const message = 'Your session expired. Please sign in again.';
+      setActionError(message);
+      toast.error(message);
+      setDeletingId(null);
+      return;
     }
+
+    const { error } = await supabase.functions.invoke('delete-invitation-user', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: {
+        invitationId: id,
+      },
+    });
+
+    if (error) {
+      const message = await getFunctionErrorMessage(error);
+      setActionError(message);
+      toast.error(message);
+      setDeletingId(null);
+      return;
+    }
+
+    toast.success('Invitation and user removed');
+    await fetchInvitations();
+    setDeletingId(null);
   };
 
   if (loading) {
@@ -82,13 +177,13 @@ export default function AdminInvitations() {
       <div className="decorative-circle-lg" />
       <div className="decorative-circle-sm" />
 
-      <div className="max-w-3xl mx-auto px-8 py-12 relative z-10">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-12 relative z-10">
         <div className="page-header">
           <div className="font-display text-xs font-bold tracking-[3px] text-primary uppercase">OTF Ventures</div>
           <div className="text-[10px] text-muted-foreground tracking-[1.5px] uppercase font-body">Invitations</div>
         </div>
 
-        <h1 className="font-display text-3xl font-extrabold text-foreground tracking-tight mb-2">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight mb-2">
           Manage Invitations
         </h1>
         <p className="text-sm text-muted-foreground font-body mb-8">
@@ -101,7 +196,7 @@ export default function AdminInvitations() {
             <UserPlus className="h-5 w-5 text-primary" />
             <h2 className="font-display text-lg font-bold text-foreground">New Invitation</h2>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="flex-1">
               <Label htmlFor="invite-email" className="sr-only">Email</Label>
               <div className="relative">
@@ -117,11 +212,26 @@ export default function AdminInvitations() {
                 />
               </div>
             </div>
-            <Button type="submit" disabled={submitting} className="font-display font-bold tracking-wider uppercase gap-2">
+            <div className="w-full sm:w-40">
+              <Label htmlFor="invite-role" className="sr-only">Role</Label>
+              <Select value={inviteRole} onValueChange={(value: 'admin' | 'user') => setInviteRole(value)}>
+                <SelectTrigger id="invite-role" className="font-body">
+                  <SelectValue placeholder="Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="admin">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Button type="submit" disabled={submitting} className="w-full sm:w-auto font-display font-bold tracking-wider uppercase gap-2">
               <Plus className="h-4 w-4" />
               {submitting ? 'Inviting…' : 'Invite'}
             </Button>
           </div>
+          {actionError && (
+            <p className="mt-3 text-sm text-destructive font-body">{actionError}</p>
+          )}
         </form>
 
         {/* Invitations list */}
@@ -132,8 +242,8 @@ export default function AdminInvitations() {
 
         <div className="space-y-2">
           {invitations.map((inv, i) => (
-            <div key={inv.id} className="glass-card px-5 py-4 flex items-center justify-between animate-fade-in" style={{ animationDelay: `${i * 50}ms` }}>
-              <div className="flex items-center gap-3">
+            <div key={inv.id} className="glass-card px-4 sm:px-5 py-4 flex items-center justify-between gap-3 animate-fade-in" style={{ animationDelay: `${i * 50}ms` }}>
+              <div className="flex items-center gap-3 min-w-0">
                 <div className={`p-2 rounded-lg ${inv.accepted ? 'bg-primary/10' : 'bg-accent'}`}>
                   {inv.accepted ? (
                     <Check className="h-4 w-4 text-primary" />
@@ -141,16 +251,18 @@ export default function AdminInvitations() {
                     <Mail className="h-4 w-4 text-primary" />
                   )}
                 </div>
-                <div>
-                  <div className="text-sm font-body font-semibold text-foreground">{inv.email}</div>
+                <div className="min-w-0">
+                  <div className="text-sm font-body font-semibold text-foreground truncate">{inv.email}</div>
                   <div className="text-[10px] text-muted-foreground font-body">
                     Invited {format(new Date(inv.created_at), 'MMM d, yyyy')}
+                    {` · ${inv.role === 'admin' ? 'Admin' : 'User'}`}
                     {inv.accepted && ' · Accepted'}
                   </div>
                 </div>
               </div>
               <button
                 onClick={() => handleDelete(inv.id)}
+                disabled={deletingId === inv.id}
                 className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
               >
                 <Trash2 className="h-4 w-4" />

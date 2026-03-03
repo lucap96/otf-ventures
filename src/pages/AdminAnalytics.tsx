@@ -31,17 +31,21 @@ export default function AdminAnalytics() {
   }, []);
 
   const fetchAnalytics = async () => {
-    // Fetch events
-    const { data: eventsData } = await supabase
-      .from('analytics_events')
-      .select('*')
-      .order('created_at', { ascending: false })
-      .limit(200);
+    const [{ data: adminRolesData }, { data: eventsData }, { data: profilesData }] = await Promise.all([
+      supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'admin'),
+      supabase
+        .from('analytics_events')
+        .select('*')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('profiles')
+        .select('user_id, email, full_name'),
+    ]);
 
-    // Fetch profiles for mapping
-    const { data: profilesData } = await supabase
-      .from('profiles')
-      .select('user_id, email, full_name');
+    const adminUserIds = new Set((adminRolesData ?? []).map((role) => role.user_id));
 
     const profileMap = new Map<string, { email: string; full_name: string | null }>();
     if (profilesData) {
@@ -51,7 +55,8 @@ export default function AdminAnalytics() {
     }
 
     if (eventsData) {
-      const enrichedEvents = eventsData.map(ev => ({
+      const nonAdminEvents = eventsData.filter((ev) => !adminUserIds.has(ev.user_id));
+      const enrichedEvents = nonAdminEvents.map(ev => ({
         ...ev,
         profiles: profileMap.get(ev.user_id) || { email: 'Unknown', full_name: null },
       }));
@@ -97,18 +102,18 @@ export default function AdminAnalytics() {
       <div className="decorative-circle-lg" />
       <div className="decorative-circle-sm" />
 
-      <div className="max-w-5xl mx-auto px-8 py-12 relative z-10">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-12 relative z-10">
         <div className="page-header">
           <div className="font-display text-xs font-bold tracking-[3px] text-primary uppercase">OTF Ventures</div>
           <div className="text-[10px] text-muted-foreground tracking-[1.5px] uppercase font-body">Analytics</div>
         </div>
 
-        <h1 className="font-display text-3xl font-extrabold text-foreground tracking-tight mb-8">
+        <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight mb-8">
           Data Room Analytics
         </h1>
 
         {/* Stats row */}
-        <div className="grid grid-cols-3 gap-4 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-10">
           {[
             { label: 'Unique Visitors', value: uniqueUsers, icon: Users },
             { label: 'Total Logins', value: totalLogins, icon: LogIn },
@@ -133,7 +138,8 @@ export default function AdminAnalytics() {
         </div>
 
         <div className="glass-card overflow-hidden animate-fade-in" style={{ animationDelay: '200ms' }}>
-          <table className="w-full border-collapse">
+          <div className="overflow-x-auto">
+          <table className="w-full border-collapse min-w-[640px]">
             <thead>
               <tr className="bg-primary">
                 {['User', 'Logins', 'Page Views', 'Total Events', 'Last Seen'].map((h) => (
@@ -168,6 +174,7 @@ export default function AdminAnalytics() {
               )}
             </tbody>
           </table>
+          </div>
         </div>
 
         {/* Recent events */}
@@ -178,8 +185,8 @@ export default function AdminAnalytics() {
 
         <div className="space-y-2">
           {events.slice(0, 20).map((ev, i) => (
-            <div key={ev.id} className="glass-card px-5 py-3 flex items-center justify-between animate-fade-in" style={{ animationDelay: `${i * 30}ms` }}>
-              <div className="flex items-center gap-3">
+            <div key={ev.id} className="glass-card px-4 sm:px-5 py-3 flex items-center justify-between gap-3 animate-fade-in" style={{ animationDelay: `${i * 30}ms` }}>
+              <div className="flex items-center gap-3 min-w-0">
                 <div className={`p-1.5 rounded-md ${ev.event_type === 'login' ? 'bg-primary/10' : 'bg-accent'}`}>
                   {ev.event_type === 'login' ? (
                     <LogIn className="h-3.5 w-3.5 text-primary" />
@@ -187,16 +194,16 @@ export default function AdminAnalytics() {
                     <Eye className="h-3.5 w-3.5 text-primary" />
                   )}
                 </div>
-                <div>
-                  <span className="text-xs font-body font-semibold text-foreground">
+                <div className="min-w-0">
+                  <span className="text-xs font-body font-semibold text-foreground block truncate">
                     {(ev as any).profiles?.email || 'Unknown'}
                   </span>
-                  <span className="text-xs text-muted-foreground font-body ml-2">
+                  <span className="text-xs text-muted-foreground font-body block truncate">
                     {ev.event_type === 'login' ? 'logged in' : `viewed ${ev.metadata?.page || 'a page'}`}
                   </span>
                 </div>
               </div>
-              <div className="text-[10px] text-muted-foreground font-body">
+              <div className="text-[10px] text-muted-foreground font-body shrink-0">
                 {format(new Date(ev.created_at), 'MMM d, HH:mm')}
               </div>
             </div>

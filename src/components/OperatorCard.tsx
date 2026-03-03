@@ -24,7 +24,7 @@ export default function OperatorCard({ name, role, tagline, description, stats, 
           <h3 className="font-display text-lg font-extrabold text-foreground tracking-tight">{name}</h3>
           <div className="text-[10px] text-primary font-bold uppercase tracking-[1.5px] font-body">{role}</div>
         </div>
-        <div className="flex gap-5 shrink-0">
+        <div className="flex gap-4 sm:gap-5 w-full sm:w-auto justify-start sm:justify-end">
           {stats.map((s, i) => (
             <div key={i} className="text-center">
               <div className="font-display text-base font-extrabold text-primary">{s.value}</div>
