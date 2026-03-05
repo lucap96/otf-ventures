@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTF Ventures – Operators</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Trispace:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;500;600;700;800;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --blue:#1a56db; --black:#0a0a0a; --text:#111111; --gray:#444444; --light:#eef1f8; --bg:#f5f6f9; --border:#d8dce8; }
+  body { font-family:'Trispace',sans-serif; background:#fff; width:210mm; margin:0 auto; }
+
+  h1,h2,h3,.op-name,.ph-logo,.cover-logo,.pf-logo,.cs-num,.os-num,.section-title,.cover-title,.stat-num { font-family:'League Spartan',sans-serif; }
+
+  /* ── ALL PAGES share same background ── */
+  .page, .cover {
+    width:210mm; min-height:297mm;
+    background:var(--bg);
+    padding:44px 52px;
+    page-break-after:always;
+    display:flex; flex-direction:column;
+    position:relative; overflow:hidden;
+  }
+
+  /* Circle decoration */
+  .page::before, .cover::before { content:''; position:absolute; top:-140px; right:-140px; width:420px; height:420px; border-radius:50%; border:1px solid rgba(26,86,219,0.15); pointer-events:none; }
+  .page::after, .cover::after { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(26,86,219,0.25); pointer-events:none; }
+
+  /* ── COVER ── */
+  .cover { justify-content:space-between; }
+  .cover-logo { font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:5px; }
+  .cover-sub { font-size:11px; color:var(--gray); letter-spacing:1px; font-family:'Trispace',sans-serif; }
+  .cover-mid { position:relative; z-index:2; }
+  .cover-eyebrow { font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:18px; font-family:'Trispace',sans-serif; }
+  .cover-title { font-size:58px; font-weight:800; color:var(--text); line-height:1.04; letter-spacing:-1.5px; margin-bottom:24px; }
+  .cover-title span { color:var(--blue); }
+  .cover-desc { font-size:13.5px; color:var(--text); line-height:1.8; max-width:500px; }
+  .cover-desc p+p { margin-top:12px; }
+  .cover-stats { display:flex; gap:0; margin-top:44px; position:relative; z-index:2; }
+  .cs { flex:1; padding:20px 24px; background:#fff; border:1px solid var(--border); border-right:none; }
+  .cs:first-child { border-radius:10px 0 0 10px; }
+  .cs:last-child { border-right:1px solid var(--border); border-radius:0 10px 10px 0; }
+  .cs-num { font-size:26px; font-weight:800; color:var(--blue); }
+  .cs-lbl { font-size:10px; color:var(--gray); margin-top:3px; text-transform:uppercase; letter-spacing:1px; font-family:'Trispace',sans-serif; }
+  .cover-bot { display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .cover-bot span { font-size:10px; color:var(--gray); letter-spacing:1px; font-family:'Trispace',sans-serif; }
+
+  /* ── PAGE HEADER ── */
+  .ph { display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; padding-bottom:14px; border-bottom:2px solid var(--blue); position:relative; z-index:2; }
+  .ph-logo { font-size:11px; font-weight:700; letter-spacing:3px; color:var(--blue); text-transform:uppercase; }
+  .ph-sec { font-size:10px; color:var(--gray); letter-spacing:1.5px; text-transform:uppercase; font-family:'Trispace',sans-serif; }
+
+  /* Section titles */
+  .section-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:6px; font-family:'Trispace',sans-serif; }
+  .section-title { font-size:26px; font-weight:800; color:var(--text); letter-spacing:-0.5px; margin-bottom:6px; }
+  .section-rule { width:48px; height:3px; background:var(--blue); margin-bottom:24px; }
+
+  /* ── OPERATOR CARD ── */
+  .op { border:1px solid var(--border); border-radius:12px; padding:24px 28px; margin-bottom:16px; background:#fff; box-shadow:0 1px 4px rgba(26,86,219,0.05); position:relative; z-index:2; }
+  .op:last-of-type { margin-bottom:0; }
+
+  .op-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px; gap:16px; }
+  .op-name { font-size:18px; font-weight:800; color:var(--text); letter-spacing:-0.3px; margin-bottom:3px; }
+  .op-role { font-size:10px; color:var(--blue); font-weight:700; text-transform:uppercase; letter-spacing:1.5px; font-family:'Trispace',sans-serif; }
+
+  .op-stats { display:flex; gap:18px; flex-shrink:0; }
+  .os { text-align:center; }
+  .os-num { font-size:16px; font-weight:800; color:var(--blue); }
+  .os-lbl { font-size:8.5px; color:var(--gray); text-transform:uppercase; letter-spacing:0.8px; margin-top:2px; font-family:'Trispace',sans-serif; }
+
+  .op-tagline { font-size:12px; color:var(--gray); font-style:italic; line-height:1.6; padding-left:12px; border-left:3px solid var(--blue); margin-bottom:14px; font-family:'Trispace',sans-serif; }
+  .op-divider { height:1px; background:var(--border); margin-bottom:14px; }
+  .op-body { font-size:12px; line-height:1.8; color:var(--text); margin-bottom:16px; }
+  .op-body p+p { margin-top:10px; }
+
+  .op-tags { display:flex; flex-wrap:nowrap; gap:6px; overflow:hidden; }
+  .tag { background:var(--light); color:var(--blue); font-size:10px; font-weight:600; padding:4px 11px; border-radius:20px; border:1px solid rgba(26,86,219,0.2); font-family:'Trispace',sans-serif; white-space:nowrap; }
+
+  /* ── TABLE ── */
+  .tbl-wrap { overflow:hidden; border-radius:10px; border:1px solid var(--border); position:relative; z-index:2; }
+  table { width:100%; border-collapse:collapse; }
+  thead tr { background:var(--blue); }
+  thead th { padding:11px 13px; font-size:10px; font-weight:700; text-align:left; color:#fff; text-transform:uppercase; letter-spacing:0.8px; font-family:'Trispace',sans-serif; }
+  thead th:first-child { width:30%; }
+  tbody tr { border-bottom:1px solid var(--border); }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:nth-child(even) { background:var(--bg); }
+  tbody td { padding:9px 13px; font-size:11px; color:var(--text); font-family:'Trispace',sans-serif; }
+  tbody td:first-child { color:var(--gray); font-size:10.5px; }
+  .exc { color:var(--blue); font-weight:700; }
+  .tbl-section td { background:var(--light); color:var(--blue); font-size:9.5px; font-weight:700; text-transform:uppercase; letter-spacing:1px; padding:6px 13px; font-family:'Trispace',sans-serif; }
+
+  /* ── FOOTER ── */
+  .pf { margin-top:auto; padding-top:16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .pf span { font-size:9.5px; color:var(--gray); font-family:'Trispace',sans-serif; }
+  .pf-logo { color:var(--blue); font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+
+  @media (max-width: 768px) {
+    body { width: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+    .page, .cover { width: 100%; min-height: auto; padding: 24px 16px; page-break-after: auto; }
+    .page::before, .page::after, .cover::before, .cover::after { display: none; }
+    .cover-title { font-size: 40px; }
+    .section-title { font-size: 22px; }
+    .title-main { font-size: 30px; }
+    .cover-stats, .stat-row, .deal-meta, .op-stats, .cover-bot, .pf, .ph { flex-wrap: wrap; }
+    .ph, .cover-bot, .pf, .op-top, .deal-top { gap: 8px; }
+    .op-tags { flex-wrap: wrap; overflow: visible; }
+    .pillar { grid-template-columns: 1fr; gap: 14px; }
+    .gov-grid, .deal-grid { grid-template-columns: 1fr; gap: 12px; }
+    .channel { grid-template-columns: 1fr; }
+    .ch-num-col { display: none; }
+    .ch-content { margin-left: 0; }
+    .item { flex-direction: column; }
+    .tbl-wrap { overflow-x: hidden; }
+    table { width: 100%; min-width: 0; table-layout: fixed; }
+    th, td { white-space: normal; word-break: break-word; overflow-wrap: anywhere; }
+    .cs, .stat-cell { border-right: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+    body .page > div[style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+  }
+  @media print {
+    body { width:210mm; }
+    .cover, .page { page-break-after:always; }
+    @page { size:A4; margin:0; }
+    .print-btn { display:none; }
+  }
+  .print-btn { position:fixed; bottom:24px; right:24px; background:var(--blue); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; font-family:'League Spartan',sans-serif; box-shadow:0 4px 16px rgba(26,86,219,0.3); z-index:999; }
+  .print-btn:hover { background:#1447c0; }
+</style>
+</head>
+<body>
+<!-- <button class="print-btn" onclick="window.print()">Export as PDF</button> -->
+
+<!-- COVER -->
+<div class="cover">
+  <div style="position:relative;z-index:2;">
+    <div class="cover-logo">OTF Ventures</div>
+    <div class="cover-sub">Data Room · Confidential</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-eyebrow">The people behind the access</div>
+    <div class="cover-title">The<br><span>{Ωperators}</span></div>
+    <div class="cover-desc">
+      <p>The best founders do not want another investor. They want someone who has done it.</p>
+      <p>That is what this group is. They are not advisors. Between them they have taken two companies public, raised $1.2B+, hired 3,000+ people, and scaled to over $1B in revenue. The most important number: 49 deals alongside the OTF team, a well oiled machine ready to help where it matters.</p>
+      <p>Every major inflection point a European founder is likely to face, someone in this group has lived it. Two public listings. Building a business across 30 countries. Profitability in one of Europe's most capital-intensive hardware races. A full-stack AI and robotics business built from scratch with no category to reference. When a portfolio company hits one of those moments, we do not send a generic intro. We put the right person in the room.</p>
+    </div>
+    <div class="cover-stats">
+      <div class="cs"><div class="cs-num">$1.2B+</div><div class="cs-lbl">Raised collectively</div></div>
+      <div class="cs"><div class="cs-num">3,000+</div><div class="cs-lbl">People hired</div></div>
+      <div class="cs"><div class="cs-num">$1B+</div><div class="cs-lbl">Revenue built</div></div>
+    </div>
+  </div>
+      <div class="cover-bot"><span>Confidential · Not for distribution</span></div>
+</div>
+
+<!-- PAGE 1: Patrick + Felix -->
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">Operators</div></div>
+
+  <div class="op">
+    <div class="op-top">
+      <div><div class="op-name">🇩🇪 Patrick Andrae</div><div class="op-role">CEO, HomeToGo</div></div>
+      <div class="op-stats">
+        <div class="os"><div class="os-num">$500M</div><div class="os-lbl">Raised</div></div>
+        <div class="os"><div class="os-num">1,500+</div><div class="os-lbl">Hires</div></div>
+        <div class="os"><div class="os-num">12</div><div class="os-lbl">Joint deals</div></div>
+      </div>
+    </div>
+    <div class="op-tagline">The only person in the room who went from the first line of code to the public listing and did it across 30 countries</div>
+    <div class="op-divider"></div>
+    <div class="op-body">
+      <p>Patrick built HomeToGo from a blank page to a public company with over €350M in revenue, 1,500 employees, and operations across 30+ countries. That full journey matters because he has solved every problem a scaling founder will face, not in theory but in practice and under pressure.</p>
+      <p>What makes him rare is the combination of depth and range. A self-taught developer with a PhD in Law, he can sit with a technical co-founder at pre-seed and debug product decisions, then help the same founder think through a Series B or new market entry two years later. Most operators can do one of those things. Patrick has done all of them, repeatedly, at scale.</p>
+      <p>Founders call Patrick to navigate their first international expansion, pressure-test a fundraise, or build the hiring infrastructure to scale beyond their home market. He has co-invested alongside OTF in 12 companies including Runware, Xaver, Montamo, and Cala AI.</p>
+    </div>
+    <div class="op-tags"><span class="tag">0 to IPO, no shortcuts</span><span class="tag">GTM playbook across Europe</span><span class="tag">Europe's most complete founder journey</span></div>
+  </div>
+
+  <div class="op">
+    <div class="op-top">
+      <div><div class="op-name">🇬🇧 Felix Leuschner</div><div class="op-role">CEO, Venmark</div></div>
+      <div class="op-stats">
+        <div class="os"><div class="os-num">$100M</div><div class="os-lbl">Raised</div></div>
+        <div class="os"><div class="os-num">200+</div><div class="os-lbl">Hires</div></div>
+        <div class="os"><div class="os-num">10</div><div class="os-lbl">Joint deals</div></div>
+      </div>
+    </div>
+    <div class="op-tagline">The founder who has been through the acquisition process and knows what it takes to build a company someone actually wants to buy</div>
+    <div class="op-divider"></div>
+    <div class="op-body">
+      <p>Felix built Drover from zero, raised $30M+ from Cherry and others, and sold it to Cazoo before joining the executive team through its $7B New York listing. He is now building again at Venmark, which means every conversation he has with a portfolio founder is grounded in what is working today, not a playbook from five years ago.</p>
+      <p>What Felix brings that most operators cannot is hard-won commercial instinct at the earliest stages. He has been the founder-led salesperson with no team, the person who had to figure out unit economics before there was a finance function, and the executive who had to build processes fast enough to keep up with growth.</p>
+      <p>Founders call Felix when they need to fix their unit economics, build their first sales motion, or figure out what a path to acquisition actually looks like. His 10 co-investments alongside OTF including DeBlock, Capably, Warden, and Firenze reflect genuine conviction, not passive participation.</p>
+    </div>
+    <div class="op-tags"><span class="tag">GTM before you can afford it</span><span class="tag">Margin optimisation at scale</span><span class="tag">Multiple exits, still building</span></div>
+  </div>
+
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+<!-- PAGE 2: Fredrik + Dexory -->
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">Operators</div></div>
+
+  <div class="op">
+    <div class="op-top">
+      <div><div class="op-name">🇸🇪 Fredrik Hjelm & Adam Jafer</div><div class="op-role">CEO & CTO, Voi Technology</div></div>
+      <div class="op-stats">
+        <div class="os"><div class="os-num">$400M</div><div class="os-lbl">Raised</div></div>
+        <div class="os"><div class="os-num">1,000+</div><div class="os-lbl">Hires</div></div>
+        <div class="os"><div class="os-num">8</div><div class="os-lbl">Joint deals</div></div>
+      </div>
+    </div>
+    <div class="op-tagline">The operators who won one of Europe's hardest startup races and now open doors that few VCs could</div>
+    <div class="op-divider"></div>
+    <div class="op-body">
+      <p>Fredrik and Adam built Voi into Europe's leading micromobility company, raising $400M+, hiring 1,000+ people across 100+ cities, and reaching profitability in a category where most well-funded competitors failed. What that journey required was an unusual combination: regulatory navigation across dozens of jurisdictions, operational discipline at hardware scale, and the fundraising stamina to keep going through one of Europe's most capital-intensive races.</p>
+      <p>Fredrik is one of the most connected operators in the Nordic ecosystem and beyond — a word from him opens doors that few VCs could. Adam, as the technical co-founder who built and scaled Voi's entire engineering infrastructure, gives portfolio companies rare peer-level technical advice at the CTO layer.</p>
+      <p>Founders call Fredrik and Adam when they need an introduction that actually lands, a playbook for scaling across markets, or a CTO-level sounding board on engineering decisions. Their reputation is strong enough that Lovable — OTF's 122x returning investment — reopened its pre-seed round after close just to get them on the cap table.</p>
+    </div>
+    <div class="op-tags"><span class="tag">100 cities, one playbook</span><span class="tag">Engineering depth meets ecosystem reach</span><span class="tag">Nordic kingmakers</span></div>
+  </div>
+
+  <div class="op">
+    <div class="op-top">
+      <div><div class="op-name">🇬🇧 🇷🇴 Andrei Danescu, Oana Jinga & Adrian Negoita</div><div class="op-role">CEO, CCO & CTO, Dexory</div></div>
+      <div class="op-stats">
+        <div class="os"><div class="os-num">$250M</div><div class="os-lbl">Raised</div></div>
+        <div class="os"><div class="os-num">200+</div><div class="os-lbl">Hires</div></div>
+        <div class="os"><div class="os-num">4+</div><div class="os-lbl">Yrs with OTF</div></div>
+      </div>
+    </div>
+    <div class="op-tagline">The team that built one of Europe's most technically complex businesses from scratch, with backgrounds spanning Formula 1, Google, and IBM</div>
+    <div class="op-divider"></div>
+    <div class="op-body">
+      <p>Since 2015, Andrei, Oana, and Adrian have scaled Dexory from a garage project into a global leader in warehouse automation and AI, with hundreds of robots deployed in production environments for some of the world's largest logistics companies. They raised $250M+ and built a genuinely full-stack business combining hardware engineering, computer vision, AI software, and enterprise sales simultaneously.</p>
+      <p>For any founder building something technically hard — deep tech, robotics, AI infrastructure, or complex enterprise software — the Dexory team offers something most investors cannot: genuine peer-level credibility. They have shipped physical AI products at scale, sold into demanding enterprise procurement processes, and built a commercial motion around technology that had no established category when they started.</p>
+      <p>Founders call the Dexory team when they are building something technically hard and need someone who has actually shipped it at scale. Adrian as CTO brings exceptional depth across hardware-software systems, and together with Adam at Voi, OTF's portfolio companies have access to two CTOs covering almost every architecture challenge an early-stage founder will face.</p>
+    </div>
+    <div class="op-tags"><span class="tag">Full stack</span><span class="tag">Commercialising Frontier Tech</span><span class="tag">Building categories from scratch</span></div>
+  </div>
+
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+<!-- TABLE PAGE -->
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">Capability Matrix</div></div>
+  <div class="section-label">Overview</div>
+  <div class="section-title">Operator Capability Matrix</div>
+  <div class="section-rule"></div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Capability</th>
+          <th>🇩🇪 Patrick</th>
+          <th>🇬🇧 Felix</th>
+          <th>🇸🇪 Fredrik & Adam</th>
+          <th>🇬🇧🇷🇴 Andrei, Oana & Adrian</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="tbl-section"><td colspan="5">Track record</td></tr>
+        <tr><td>Capital raised</td><td>$500M</td><td>$100M</td><td>$400M</td><td>$250M</td></tr>
+        <tr><td>People hired</td><td>1,500+</td><td>200+</td><td>1,000+</td><td>200+</td></tr>
+        <tr><td>Joint investments with OTF</td><td>12</td><td>10</td><td>8</td><td>1+</td></tr>
+        <tr class="tbl-section"><td colspan="5">Commercial & GTM</td></tr>
+        <tr><td>Multi-market GTM</td><td class="exc">Exceptional</td><td>Strong</td><td>Strong</td><td>Strong</td></tr>
+        <tr><td>Unit economics</td><td>Strong</td><td class="exc">Exceptional</td><td>Strong</td><td>Strong</td></tr>
+        <tr><td>Enterprise sales</td><td>Strong</td><td>Strong</td><td></td><td class="exc">Exceptional</td></tr>
+        <tr><td>Serial exits</td><td>Strong</td><td class="exc">Exceptional</td><td></td><td></td></tr>
+        <tr class="tbl-section"><td colspan="5">Scaling & operations</td></tr>
+        <tr><td>Hiring at scale</td><td class="exc">Exceptional</td><td>Strong</td><td class="exc">Exceptional</td><td>Strong</td></tr>
+        <tr><td>Hypergrowth scaling</td><td>Strong</td><td>Strong</td><td class="exc">Exceptional</td><td>Strong</td></tr>
+        <tr><td>Fundraising</td><td class="exc">Exceptional</td><td>Strong</td><td>Strong</td><td>Strong</td></tr>
+        <tr><td>Regulatory navigation</td><td></td><td></td><td class="exc">Exceptional</td><td></td></tr>
+        <tr><td>Public markets & IPO</td><td class="exc">Exceptional</td><td>Strong</td><td></td><td></td></tr>
+        <tr class="tbl-section"><td colspan="5">Technical depth</td></tr>
+        <tr><td>Technical background</td><td>Self-taught developer, product depth</td><td>Modern tech stack, B2B SaaS</td><td>Scalable software & engineering infra</td><td>Computer vision, robotics & AI systems</td></tr>
+        <tr><td>Hardware & physical ops</td><td></td><td></td><td>Scooter networks at continental scale</td><td>Robot manufacturing & deployment</td></tr>
+        <tr><td>Full stack build (HW+SW+AI)</td><td></td><td></td><td></td><td>Hardware, software, AI and enterprise sales built simultaneously</td></tr>
+        <tr><td>Infrastructure engineering</td><td></td><td></td><td>City-scale mobility infrastructure</td><td>Real-time data & warehouse systems</td></tr>
+        <tr><td>AI & machine learning</td><td></td><td></td><td></td><td>Computer vision, inventory intelligence, autonomous navigation</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pf" style="margin-top:24px;"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+</body>
+</html>

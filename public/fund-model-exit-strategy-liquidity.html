@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTF Ventures · Exit Strategy</title>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&family=Trispace:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Trispace', monospace;
+      background: #FAFAFA;
+      color: #0A0A0A;
+      padding: 52px 24px;
+      min-height: 100vh;
+    }
+    .wrap { max-width: 820px; margin: 0 auto; }
+    .spartan { font-family: 'League Spartan', sans-serif; }
+    .trispace { font-family: 'Trispace', monospace; }
+
+    /* HEADER */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #2563FF;
+      margin-bottom: 52px;
+    }
+    .ph-logo {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #2563FF;
+      text-transform: uppercase;
+    }
+    .ph-section {
+      font-family: 'Trispace', monospace;
+      font-size: 10px;
+      color: #444;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+    }
+
+    h1 { font-family: 'League Spartan', sans-serif; font-size: 42px; font-weight: 900; color: #0A0A0A; line-height: 1.05; margin-bottom: 16px; }
+    h2 { font-family: 'League Spartan', sans-serif; font-size: 28px; font-weight: 900; color: #0A0A0A; line-height: 1.1; margin: 0 0 10px 0; }
+    .blue { color: #2563FF; }
+
+    .tag {
+      font-family: 'Trispace', monospace;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #2563FF; margin-bottom: 10px;
+    }
+    p.body {
+      font-family: 'Trispace', monospace;
+      font-size: 13px; color: #0A0A0A;
+      line-height: 1.8; margin-bottom: 28px;
+      max-width: 580px;
+    }
+    .divider { border-top: 1px solid #E5E7EB; margin: 52px 0; }
+    .card { background: #fff; border: 1px solid #E5E7EB; border-radius: 2px; padding: 28px; margin-bottom: 16px; }
+    .card-blue { background: #2563FF; border: none; }
+
+    /* CALLOUT */
+    .callout { border-left: 3px solid #2563FF; padding-left: 16px; margin-top: 24px; }
+    .callout p { font-family: 'Trispace', monospace; font-size: 12px; color: #0A0A0A; line-height: 1.8; }
+
+    /* STAT BOXES */
+    .stat-row { display: flex; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
+    .stat-box { flex: 1; min-width: 180px; padding: 20px; border-left: 3px solid #2563FF; background: #F8FAFF; }
+    .stat-value { font-family: 'League Spartan', sans-serif; font-size: 30px; font-weight: 900; color: #2563FF; line-height: 1; }
+    .stat-label { font-family: 'Trispace', monospace; font-size: 12px; font-weight: 600; color: #0A0A0A; margin-top: 6px; }
+    .stat-sub { font-family: 'Trispace', monospace; font-size: 10px; color: #444; margin-top: 4px; }
+
+    /* IRR CALLOUT BOXES */
+    .irr-row { display: flex; gap: 0; margin: 28px 0; border: 1px solid #E5E7EB; border-radius: 2px; overflow: hidden; }
+    .irr-cell { flex: 1; padding: 24px 22px; background: #fff; border-right: 1px solid #E5E7EB; }
+    .irr-cell:last-child { border-right: none; }
+    .irr-cell.highlight { background: #2563FF; }
+    .irr-value { font-family: 'League Spartan', sans-serif; font-size: 34px; font-weight: 900; color: #2563FF; line-height: 1; display: block; margin-bottom: 6px; }
+    .irr-cell.highlight .irr-value { color: #fff; }
+    .irr-label { font-family: 'Trispace', monospace; font-size: 11px; color: #444; line-height: 1.6; }
+    .irr-cell.highlight .irr-label { color: rgba(255,255,255,0.8); }
+    .irr-equals { display: flex; align-items: center; justify-content: center; font-family: 'League Spartan', sans-serif; font-size: 20px; font-weight: 900; color: #CBD5E1; padding: 0 4px; flex-shrink: 0; }
+
+    /* PANEL ROW */
+    .panel-row { display: flex; gap: 1px; flex-wrap: wrap; border: 1px solid #E5E7EB; border-radius: 2px; overflow: hidden; margin-bottom: 24px; }
+    .panel { flex: 1; min-width: 200px; padding: 22px 20px; background: #fff; border-right: 1px solid #E5E7EB; }
+    .panel.highlight { background: #2563FF; }
+    .panel-title { font-family: 'League Spartan', sans-serif; font-size: 13px; font-weight: 700; color: #0A0A0A; margin-bottom: 8px; }
+    .panel.highlight .panel-title { color: #fff; }
+    .panel-body { font-size: 11px; color: #0A0A0A; line-height: 1.8; }
+    .panel.highlight .panel-body { color: rgba(255,255,255,0.85); }
+
+    /* PROOF POINTS */
+    .proof-point { padding: 12px 16px; margin-bottom: 4px; background: #F0F6FF; border-radius: 2px; }
+    .proof-label { font-family: 'League Spartan', sans-serif; font-size: 13px; font-weight: 700; color: #0A0A0A; }
+    .proof-body { font-size: 12px; color: #0A0A0A; }
+
+    /* SPV BOX */
+    .spv-card { background: #fff; border: 1px solid #E5E7EB; border-radius: 2px; padding: 28px; border-top: 3px solid #2563FF; }
+
+    /* FINAL QUOTE */
+    .final-quote { border-top: 3px solid #E5E7EB; padding-top: 28px; margin-top: 8px; }
+    .final-quote-inner { border-left: 4px solid #2563FF; padding-left: 20px; }
+    .final-quote p { font-family: 'League Spartan', sans-serif; font-size: 18px; font-weight: 700; color: #0A0A0A; line-height: 1.5; }
+
+    /* FOOTER */
+    .footer { font-family: 'Trispace', monospace; font-size: 10px; color: #444; text-align: center; padding-top: 32px; margin-top: 48px; border-top: 1px solid #E5E7EB; letter-spacing: 1px; }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      .irr-row { flex-direction: column; }
+      .irr-equals { display: none; }
+      .page-header { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- HEADER -->
+  <div class="page-header">
+    <div class="ph-logo">OTF Ventures</div>
+    <div class="ph-section">Exit Strategy · Data Room · Confidential</div>
+  </div>
+
+  <!-- INTRO -->
+  <div style="margin-bottom:64px">
+    <div class="tag">Exit Strategy</div>
+    <h1>Realising returns is an<br><span class="blue">active, judgment-driven process.</span></h1>
+    <p class="body" style="margin-bottom:0">
+      Entry and exits are the determinants of how you make money — both deserve equal attention, although most don't give them equal thought. Venture-backed IPOs and M&A exits in Europe are rare. We do not want to rely solely on those to achieve liquidity. As investors who have observed growth markets first-hand, we have seen how they periodically detach from fundamentals. Rather than being subject to that irrationality, we position to benefit from it — converting momentum into liquidity at moments when the market is most willing to pay.
+    </p>
+  </div>
+
+  <!-- SECTION 01 -->
+  <div class="tag">01 — The Opportunity</div>
+  <h2>Where the liquidity actually is.</h2>
+  <p class="body">€59B in European dry powder is chasing a shrinking pool of quality growth assets. The few teams who become the outliers will attract the majority of this capital — because there is nowhere else for it to go.</p>
+
+  <div class="card">
+    <div class="trispace" style="font-size:10px;font-weight:600;color:#0A0A0A;text-transform:uppercase;letter-spacing:2px;margin-bottom:20px">Why growth rounds are our primary exit window</div>
+
+    <div class="panel-row" style="margin-bottom:0">
+      <div class="panel">
+        <div class="panel-title">Demand already exists</div>
+        <div class="panel-body">Quality assets attract oversubscribed growth rounds. We are not manufacturing a buyer — we are selling into one that is already there.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Capital has nowhere else to go</div>
+        <div class="panel-body">Independent of whether the long run is guaranteed, €59B in dry powder with no quality growth assets to absorb it will drive short-term markups into the best performing companies. We sell into that moment.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">No process to run</div>
+        <div class="panel-body">We don't shop positions. We don't wait for an M&A window. Liquidity is a byproduct of company performance — not a separate problem to solve.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 02 -->
+  <div class="tag">02 — The Art of Selling</div>
+  <h2>A privilege, not a default option.</h2>
+  <p class="body">Most funds cannot sell into a round. We can — and the reason is structural.</p>
+
+  <div class="card">
+    <div class="trispace" style="font-size:10px;font-weight:600;color:#0A0A0A;text-transform:uppercase;letter-spacing:2px;margin-bottom:20px">Why others cannot do what we do</div>
+
+    <div class="proof-point">
+      <span class="proof-label">Large funds face signalling risk. </span>
+      <span class="proof-body">If a tier-one fund sells, the market notices and draws conclusions. It is structurally impossible for them to exit quietly.</span>
+    </div>
+    <div class="proof-point">
+      <span class="proof-label">Small funds face a different problem. </span>
+      <span class="proof-body">Why would the founder or the investors absorb the additional operational complexity of a secondary that does not benefit them? There is no incentive to facilitate it.</span>
+    </div>
+    <div class="proof-point" style="margin-bottom:0">
+      <span class="proof-label">We sit in neither trap. </span>
+      <span class="proof-body">Our {Ωperators} are the closest people to the founder at the moment it matters. In Lovable's case, Fredrik and Adam had such a close relationship with the founders that we could immediately move — rather than relying on a negotiated right.</span>
+    </div>
+
+    <div class="callout">
+      <p>Operator proximity to founders is a structural exit advantage — not just a sourcing one. The relationships that get us into the best deals are the same relationships that unlock liquidity when it matters.</p>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 03 -->
+  <div class="tag">03 — When We Sell</div>
+  <h2>Our north star is realised cash.</h2>
+  <p class="body">When a position is significant for the fund, we sell. This does not mean a marginal uplift but a multi billion valuation that moves the fund. The math makes the case better than any thesis statement.</p>
+
+  <div class="card">
+    <div class="trispace" style="font-size:10px;font-weight:600;color:#0A0A0A;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Why time destroys IRR — and why we sell early</div>
+    <p class="trispace" style="font-size:12px;color:#0A0A0A;line-height:1.8;margin-bottom:24px">
+      IRR is brutally time-sensitive. The same 50% IRR requires 2x in 2 years — or 102x if you hold for 10. Waiting for the final multiple is almost always the wrong trade.
+    </p>
+
+    <div class="irr-row">
+      <div class="irr-cell">
+        <span class="irr-value">2x DPI</span>
+        <span class="irr-label">in 2 years</span>
+      </div>
+      <div class="irr-equals">=</div>
+      <div class="irr-cell highlight">
+        <span class="irr-value">50% IRR</span>
+        <span class="irr-label">The same return metric…</span>
+      </div>
+      <div class="irr-equals">=</div>
+      <div class="irr-cell">
+        <span class="irr-value">102x DPI</span>
+        <span class="irr-label">required if held 10 years</span>
+      </div>
+    </div>
+
+    <p class="trispace" style="font-size:12px;color:#0A0A0A;line-height:1.8;margin-top:8px">
+      That doesn't mean we sell mechanically. We weigh how much upside is genuinely left, where the company sits in its trajectory, and what the market is willing to pay. But we do not let the pursuit of a larger paper multiple erode a real, already-exceptional return.
+    </p>
+
+    <p class="trispace" style="font-size:12px;color:#0A0A0A;line-height:1.8;margin-top:16px">
+      We focus on locking in top realised capital. Beyond that, we return the capital and make it the LP's choice whether they want more exposure to the underlying asset.
+    </p>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- SECTION 04 -->
+  <div class="tag">04 — Beyond the Fund</div>
+
+  <div class="spv-card">
+    <h2 style="margin-bottom:12px">An exit is not the end — for those who don't want it to be.</h2>
+    <p class="trispace" style="font-size:13px;color:#0A0A0A;line-height:1.8;margin-bottom:16px;max-width:600px">
+      Our primary obligation is to return and maximise the fund. Top-percentile realised returns, on the shortest credible timeline, is the only metric that matters at the fund level.
+    </p>
+    <p class="trispace" style="font-size:13px;color:#0A0A0A;line-height:1.8;margin-bottom:0;max-width:600px">
+      For LPs who want to maintain exposure to specific assets as they enter the growth stage, we facilitate continued participation through dedicated co-investment vehicles — with no fund costs. Participation is entirely optional and sized to individual preference.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat-box">
+        <div class="stat-value" style="font-size:20px">No fund costs</div>
+        <div class="stat-label">LP co-invest SPVs carry no fund fees</div>
+        <div class="stat-sub">Optional, sized to preference</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">DPI first</div>
+        <div class="stat-label">Fund locks in real returns</div>
+        <div class="stat-sub">LP chooses whether to stay in</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Optionality sacrificed</div>
+        <div class="stat-sub">We never trade liquidity for upside</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL QUOTE -->
+  <div style="margin-top:52px">
+    <div class="final-quote">
+      <div class="final-quote-inner">
+        <p>We do not limit optionality — we just make sure we never sacrifice liquidity chasing it.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">OTF Ventures · Confidential · Not for distribution · Full portfolio as of December 15, 2025</div>
+
+</div>
+</body>
+</html>

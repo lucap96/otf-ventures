@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTF Ventures - 2026 Committed Deals</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Trispace:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;500;600;700;800;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --blue:#1a56db; --text:#111111; --gray:#444444; --light:#eef1f8; --bg:#f5f6f9; --border:#d8dce8; }
+  body { font-family:'Trispace',sans-serif; background:#fff; width:210mm; margin:0 auto; }
+  h1,h2,h3,.ph-logo,.pf-logo,.cover-logo,.cover-title,.cs-num { font-family:'League Spartan',sans-serif; }
+  .page, .cover { width:210mm; min-height:297mm; background:var(--bg); padding:44px 52px; page-break-after:always; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+  .page::before, .cover::before { content:''; position:absolute; top:-140px; right:-140px; width:420px; height:420px; border-radius:50%; border:1px solid rgba(26,86,219,0.15); pointer-events:none; }
+  .page::after, .cover::after { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(26,86,219,0.25); pointer-events:none; }
+  .cover { justify-content:space-between; }
+  .cover-logo { font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:5px; }
+  .cover-sub { font-size:11px; color:var(--gray); letter-spacing:1px; }
+  .cover-mid { position:relative; z-index:2; }
+  .cover-eyebrow { font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:18px; }
+  .cover-title { font-size:58px; font-weight:800; color:var(--text); line-height:1.04; letter-spacing:-1.5px; margin-bottom:24px; font-family:'League Spartan',sans-serif; }
+  .cover-title span { color:var(--blue); }
+  .cover-desc { font-size:13.5px; color:var(--text); line-height:1.8; max-width:500px; }
+  .cover-desc p+p { margin-top:12px; }
+  .cover-bot { display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .cover-bot span { font-size:10px; color:var(--gray); letter-spacing:1px; }
+  .ph { display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; padding-bottom:14px; border-bottom:2px solid var(--blue); position:relative; z-index:2; }
+  .ph-logo { font-size:11px; font-weight:700; letter-spacing:3px; color:var(--blue); text-transform:uppercase; font-family:'League Spartan',sans-serif; }
+  .ph-sec { font-size:10px; color:var(--gray); letter-spacing:1.5px; text-transform:uppercase; }
+  .deal { border:1px solid var(--border); border-radius:12px; padding:22px 26px; margin-bottom:14px; background:#fff; box-shadow:0 1px 4px rgba(26,86,219,0.05); position:relative; z-index:2; }
+  .deal:last-of-type { margin-bottom:0; }
+  .deal-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; gap:16px; }
+  .deal-num { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:3px; }
+  .deal-name { font-size:17px; font-weight:800; color:var(--text); letter-spacing:-0.3px; font-family:'League Spartan',sans-serif; margin-bottom:3px; }
+  .deal-meta { display:flex; gap:14px; flex-shrink:0; align-items:flex-start; }
+  .dm { text-align:center; }
+  .dm-num { font-size:15px; font-weight:800; color:var(--blue); font-family:'League Spartan',sans-serif; }
+  .dm-lbl { font-size:8px; color:var(--gray); text-transform:uppercase; letter-spacing:0.8px; margin-top:2px; }
+  .deal-tagline { font-size:11.5px; color:var(--gray); font-style:italic; line-height:1.65; padding-left:12px; border-left:3px solid var(--blue); margin-bottom:12px; }
+  .deal-divider { height:1px; background:var(--border); margin-bottom:12px; }
+  .deal-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; margin-bottom:14px; }
+  .dg-label { font-size:8.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--blue); margin-bottom:3px; }
+  .dg-val { font-size:11px; line-height:1.65; color:var(--text); }
+
+
+  .pf { margin-top:auto; padding-top:16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .pf span { font-size:9.5px; color:var(--gray); }
+  .pf-logo { color:var(--blue); font-weight:700; letter-spacing:2px; text-transform:uppercase; font-family:'League Spartan',sans-serif; }
+  @media (max-width: 768px) {
+    body { width: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+    .page, .cover { width: 100%; min-height: auto; padding: 24px 16px; page-break-after: auto; }
+    .page::before, .page::after, .cover::before, .cover::after { display: none; }
+    .cover-title { font-size: 40px; }
+    .section-title { font-size: 22px; }
+    .title-main { font-size: 30px; }
+    .cover-stats, .stat-row, .deal-meta, .op-stats, .cover-bot, .pf, .ph { flex-wrap: wrap; }
+    .ph, .cover-bot, .pf, .op-top, .deal-top { gap: 8px; }
+    .op-tags { flex-wrap: wrap; overflow: visible; }
+    .pillar { grid-template-columns: 1fr; gap: 14px; }
+    .gov-grid, .deal-grid { grid-template-columns: 1fr; gap: 12px; }
+    .channel { grid-template-columns: 1fr; }
+    .ch-num-col { display: none; }
+    .ch-content { margin-left: 0; }
+    .item { flex-direction: column; }
+    .tbl-wrap { overflow-x: hidden; }
+    table { width: 100%; min-width: 0; table-layout: fixed; }
+    th, td { white-space: normal; word-break: break-word; overflow-wrap: anywhere; }
+    .cs, .stat-cell { border-right: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+    body .page > div[style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+  }
+  @media print { body{width:210mm;} .cover,.page{page-break-after:always;} @page{size:A4;margin:0;} .print-btn{display:none;} }
+  .print-btn { position:fixed; bottom:24px; right:24px; background:var(--blue); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; font-family:'League Spartan',sans-serif; box-shadow:0 4px 16px rgba(26,86,219,0.3); z-index:999; }
+  .print-btn:hover { background:#1447c0; }
+</style>
+</head>
+<body>
+<!-- <button class="print-btn" onclick="window.print()">Export as PDF</button> -->
+
+<div class="cover">
+  <div style="position:relative;z-index:2;">
+    <div class="cover-logo">OTF Ventures</div>
+    <div class="cover-sub">Data Room · Confidential</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-eyebrow">GP Angel Activity · 2026</div>
+    <div class="cover-title">2026<br><span>Committed</span><br>Deals.</div>
+    <div class="cover-desc">
+      <p>Deals the GPs have done as angels. We made these investments privately to maintain proximity to the best founders, and demonstrate the calibre of talent and co-investors we can access.</p>
+      <p style="font-size:13px;font-weight:600;color:var(--blue);letter-spacing:0.5px;">These deals will not be warehoused.</p>
+      <p>Five deals. Five different access stories. Every one of them tells you something about how we operate and where we sit in the European ecosystem.</p>
+    </div>
+  </div>
+  <div class="cover-bot"><span>Confidential · Not for distribution · As of March 2026</span></div>
+</div>
+
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">2026 Committed Deals</div></div>
+  <div class="deal">
+    <div class="deal-top">
+      <div>
+        <div class="deal-num">Deal 01</div>
+        <div class="deal-name">AI for Returns</div>
+      </div>
+      <div class="deal-meta">
+        <div class="dm"><div class="dm-num">$2M</div><div class="dm-lbl">Round</div></div>
+        <div class="dm"><div class="dm-num">$10M</div><div class="dm-lbl">Post-money</div></div>
+        <div class="dm"><div class="dm-num">5</div><div class="dm-lbl">Term sheets</div></div>
+      </div>
+    </div>
+    <div class="deal-tagline">The kind of founder who decided, very early, they were going to do this regardless of what anyone said. And then did it.</div>
+    <div class="deal-divider"></div>
+    <div class="deal-grid">
+      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Seedcamp · Yellow</div></div>
+      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Personal endorsement from a portfolio founder. Not a warm intro, a direct vouch from someone who had seen our work up close.</div></div>
+      <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">21 years old. Walked away from university at 19 to join a YC-backed company as a builder. The kind of conviction that does not come from a CV. It comes from someone who simply cannot imagine doing anything else.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">Five term sheets on the table. Round massively oversubscribed. We were chosen, not allocated a slot.</div></div>
+    </div>
+  </div>
+  <div class="deal">
+    <div class="deal-top">
+      <div>
+        <div class="deal-num">Deal 02</div>
+        <div class="deal-name">Cursor for Hardware</div>
+      </div>
+      <div class="deal-meta">
+        <div class="dm"><div class="dm-num">$4M</div><div class="dm-lbl">Round</div></div>
+        <div class="dm"><div class="dm-num">$20M</div><div class="dm-lbl">Post-money</div></div>
+        <div class="dm"><div class="dm-num">3</div><div class="dm-lbl">Term sheets</div></div>
+      </div>
+    </div>
+    <div class="deal-tagline">A rare double: credibility and an audience that actually listens. Built through doing, not talking.</div>
+    <div class="deal-divider"></div>
+    <div class="deal-grid">
+      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Lightspeed</div></div>
+      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Two Tier 1 funds, both OTF LPs, called us directly. They wanted us in the round alongside them. We did not knock. We were invited.</div></div>
+      <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">Experienced startup operator and a respected voice in hardware and embedded systems. A following built through shipping, not posting. Does not need to explain the problem. They have already lived it, fixed it, and are building the permanent solution.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">Multiple US term sheets. We got our allocation as Dexory is one of the leaders for Hardware in Europe.</div></div>
+    </div>
+  </div>
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">2026 Committed Deals</div></div>
+  <div class="deal">
+    <div class="deal-top">
+      <div>
+        <div class="deal-num">Deal 03</div>
+        <div class="deal-name">AI for Wealth Managers</div>
+      </div>
+      <div class="deal-meta">
+        <div class="dm"><div class="dm-num">&#8364;3.5M</div><div class="dm-lbl">Round</div></div>
+        <div class="dm"><div class="dm-num">&#8364;17.5M</div><div class="dm-lbl">Post-money</div></div>
+        <div class="dm"><div class="dm-num">3</div><div class="dm-lbl">Term sheets</div></div>
+      </div>
+    </div>
+    <div class="deal-tagline">Watched one of Europe's most consequential fintech stories from the inside. Left to build the layer that was always missing.</div>
+    <div class="deal-divider"></div>
+    <div class="deal-grid">
+      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Cherry Ventures</div></div>
+      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Deep network proximity to the founder's former employer. The kind of relationship that puts you in front of a founder before they are pitching anyone else.</div></div>
+      <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">Former Head of Product at one of Europe's defining fintech stories. Understood the whitespace before anyone outside could see it. Left with the distribution advantage already baked in: the relationships, the credibility, and a customer pipeline that would take any outsider five years to build.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">Multiple term sheets from European multistage funds. Cherry led. The round did not need us. They wanted us specifically on the cap table.</div></div>
+    </div>
+  </div>
+  <div class="deal">
+    <div class="deal-top">
+      <div>
+        <div class="deal-num">Deal 04</div>
+        <div class="deal-name">Infrastructure for Private Markets</div>
+      </div>
+      <div class="deal-meta">
+        <div class="dm"><div class="dm-num">$1.5M</div><div class="dm-lbl">Round</div></div>
+        <div class="dm"><div class="dm-num">$12M</div><div class="dm-lbl">Post-money</div></div>
+        <div class="dm"><div class="dm-num">Angels</div><div class="dm-lbl">Only</div></div>
+      </div>
+    </div>
+    <div class="deal-tagline">A founder who did not need a lead investor. They needed the right door opened. We opened it.</div>
+    <div class="deal-divider"></div>
+    <div class="deal-grid">
+      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Angels only. No institutional capital sought or needed.</div></div>
+      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">We made the introduction that unlocked the deal. Our network was the product here, not the capital. The founder came to us because of what we could open, not what we could write.</div></div>
+      <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">A senior operator who spent years inside one of the startups shaking up the market, building the infrastructure that private markets run on. He did not just understand the problem from the outside. He lived inside it. The kind of domain expertise that cannot be manufactured.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">No institutional competition. Round structured to stay tight and deliberate. This is what it looks like when a founder does not need the money. They need the right people. We were those people.</div></div>
+    </div>
+  </div>
+  <div class="deal">
+    <div class="deal-top">
+      <div>
+        <div class="deal-num">Deal 05</div>
+        <div class="deal-name">Defence and Deep Industry Infrastructure</div>
+      </div>
+      <div class="deal-meta">
+        <div class="dm"><div class="dm-num">$700K</div><div class="dm-lbl">Round</div></div>
+        <div class="dm"><div class="dm-num">$6M</div><div class="dm-lbl">Post-money</div></div>
+        <div class="dm"><div class="dm-num">Seedcamp</div><div class="dm-lbl">Lead</div></div>
+      </div>
+    </div>
+    <div class="deal-tagline">Completely committed to a space most investors still do not understand. Does not play by the rules because the rules were not written for people this convicted.</div>
+    <div class="deal-divider"></div>
+    <div class="deal-grid">
+      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Seedcamp</div></div>
+      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Previous deals alongside Seedcamp gave us a tight relationship. They pinged us directly. That is what a strong co-investor network looks like in practice.</div></div>
+      <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">Completely obsessed with defence, aerospace, manufacturing and deep industry. Got into the space before it was fashionable, stayed in it when no one was paying attention, and built his own access through sheer conviction rather than institutional backing. He does not follow the playbook because there is no playbook for someone like him. The kind of founder who operates on a different frequency entirely.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">A new round has already emerged at an uplift. We got in before the market caught up.</div></div>
+    </div>
+  </div>
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution · As of March 2026</span></div>
+</div>
+
+</body>
+</html>

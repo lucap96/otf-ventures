@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTF Ventures — How We Work With Operators</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Trispace:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;500;600;700;800;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --blue:#1a56db; --black:#0a0a0a; --text:#111111; --gray:#444444; --light:#eef1f8; --bg:#f5f6f9; --border:#d8dce8; }
+  body { font-family:'Trispace',sans-serif; background:#fff; width:210mm; margin:0 auto; }
+
+  h1,h2,h3,.cover-title,.stat-num { font-family:'League Spartan',sans-serif; }
+
+  .page, .cover {
+    width:210mm; min-height:297mm;
+    background:var(--bg);
+    padding:44px 52px;
+    page-break-after:always;
+    display:flex; flex-direction:column;
+    position:relative; overflow:hidden;
+  }
+  .page::before, .cover::before { content:''; position:absolute; top:-140px; right:-140px; width:420px; height:420px; border-radius:50%; border:1px solid rgba(26,86,219,0.15); pointer-events:none; }
+  .page::after,  .cover::after  { content:''; position:absolute; top:-80px;  right:-80px;  width:280px; height:280px; border-radius:50%; border:1px solid rgba(26,86,219,0.25); pointer-events:none; }
+
+  /* COVER */
+  .cover { justify-content:space-between; }
+  .cover-logo { font-family:'League Spartan',sans-serif; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:5px; }
+  .cover-sub  { font-size:11px; color:var(--gray); letter-spacing:1px; }
+  .cover-mid  { position:relative; z-index:2; }
+  .cover-eyebrow { font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:18px; }
+  .cover-title { font-size:58px; font-weight:800; color:var(--text); line-height:1.04; letter-spacing:-1.5px; margin-bottom:24px; }
+  .cover-title span { color:var(--blue); }
+  .cover-desc { font-size:13px; color:var(--text); line-height:1.8; max-width:500px; }
+  .cover-desc p+p { margin-top:12px; }
+  .cover-bot { display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .cover-bot span { font-size:10px; color:var(--gray); letter-spacing:1px; }
+
+  /* PAGE HEADER */
+  .ph { display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; padding-bottom:14px; border-bottom:2px solid var(--blue); position:relative; z-index:2; }
+  .ph-logo { font-family:'League Spartan',sans-serif; font-size:11px; font-weight:700; letter-spacing:3px; color:var(--blue); text-transform:uppercase; }
+  .ph-sec  { font-size:10px; color:var(--gray); letter-spacing:1.5px; text-transform:uppercase; }
+
+  /* SECTION LABELS */
+  .section-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:6px; position:relative; z-index:2; }
+  .section-title { font-family:'League Spartan',sans-serif; font-size:26px; font-weight:800; color:var(--text); letter-spacing:-0.5px; margin-bottom:6px; position:relative; z-index:2; }
+  .section-rule  { width:48px; height:3px; background:var(--blue); margin-bottom:28px; position:relative; z-index:2; }
+
+  /* INTRO / BODY */
+  .card-body { font-size:12.5px; line-height:1.85; color:var(--text); margin-bottom:20px; position:relative; z-index:2; }
+  .card-body p+p { margin-top:10px; }
+  .card-body strong { color:var(--black); font-weight:700; }
+
+  /* SECTION DIVIDER */
+  .sec-divider { display:flex; align-items:center; gap:12px; margin-bottom:10px; position:relative; z-index:2; }
+  .sec-divider-label { font-size:9.5px; font-weight:700; letter-spacing:2.5px; text-transform:uppercase; color:var(--blue); white-space:nowrap; }
+  .sec-divider-line { flex:1; height:1px; background:var(--border); }
+
+  /* TABLE */
+  .tbl-wrap { border:1px solid var(--border); border-radius:8px; overflow:hidden; position:relative; z-index:2; margin-bottom:28px; }
+  table { width:100%; border-collapse:collapse; }
+  thead tr { background:var(--blue); }
+  thead th { padding:10px 14px; font-size:9.5px; font-weight:700; text-align:left; color:#fff; letter-spacing:0.8px; font-family:'Trispace',sans-serif; }
+  tbody tr { border-bottom:1px solid var(--border); }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:nth-child(even) { background:#fff; }
+  tbody tr:nth-child(odd)  { background:var(--bg); }
+  tbody td { padding:11px 14px; font-size:11px; color:var(--text); font-family:'Trispace',sans-serif; vertical-align:top; line-height:1.7; }
+  tbody td:first-child { font-size:9.5px; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:1px; white-space:nowrap; }
+  .td-combo { font-weight:700; color:var(--text); }
+
+  /* GOV GRID */
+  .gov-grid { display:grid; grid-template-columns:160px 1fr; gap:40px; align-items:center; margin-top:12px; position:relative; z-index:2; }
+  .stat { margin-bottom:24px; }
+  .stat-num { font-family:'League Spartan',sans-serif; font-size:34px; font-weight:800; color:var(--blue); line-height:1; }
+  .stat-lbl { font-size:10px; font-weight:500; letter-spacing:1px; text-transform:uppercase; color:var(--gray); margin-top:4px; }
+
+  /* CONTENT CARDS */
+  .items { display:flex; flex-direction:column; gap:5px; }
+  .item { background:#fff; border:1px solid var(--border); border-radius:8px; padding:14px 18px; }
+  .item-title { font-family:'League Spartan',sans-serif; font-size:13px; font-weight:800; color:var(--text); margin-bottom:5px; }
+  .item-desc { font-size:11px; color:var(--gray); line-height:1.8; }
+
+  /* FOOTER */
+  .pf { margin-top:auto; padding-top:16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .pf span { font-size:9.5px; color:var(--gray); }
+  .pf-logo { font-family:'League Spartan',sans-serif; color:var(--blue); font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+
+  @media (max-width: 768px) {
+    body { width: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+    .page, .cover { width: 100%; min-height: auto; padding: 24px 16px; page-break-after: auto; }
+    .page::before, .page::after, .cover::before, .cover::after { display: none; }
+    .cover-title { font-size: 40px; }
+    .section-title { font-size: 22px; }
+    .title-main { font-size: 30px; }
+    .cover-stats, .stat-row, .deal-meta, .op-stats, .cover-bot, .pf, .ph { flex-wrap: wrap; }
+    .ph, .cover-bot, .pf, .op-top, .deal-top { gap: 8px; }
+    .op-tags { flex-wrap: wrap; overflow: visible; }
+    .pillar { grid-template-columns: 1fr; gap: 14px; }
+    .gov-grid, .deal-grid { grid-template-columns: 1fr; gap: 12px; }
+    .channel { grid-template-columns: 1fr; }
+    .ch-num-col { display: none; }
+    .ch-content { margin-left: 0; }
+    .item { flex-direction: column; }
+    .tbl-wrap { overflow-x: hidden; }
+    table { width: 100%; min-width: 0; table-layout: fixed; }
+    th, td { white-space: normal; word-break: break-word; overflow-wrap: anywhere; }
+    .cs, .stat-cell { border-right: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+    body .page > div[style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+  }
+  @media print {
+    body { width:210mm; }
+    .cover, .page { page-break-after:always; }
+    @page { size:A4; margin:0; }
+    .print-btn { display:none; }
+  }
+  .print-btn { position:fixed; bottom:24px; right:24px; background:var(--blue); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; font-family:'League Spartan',sans-serif; box-shadow:0 4px 16px rgba(26,86,219,0.3); z-index:999; }
+  .print-btn:hover { background:#1447c0; }
+</style>
+</head>
+<body>
+<!-- <button class="print-btn" onclick="window.print()">Export as PDF</button> -->
+
+<!-- COVER -->
+<div class="cover">
+  <div style="position:relative;z-index:2;">
+    <div class="cover-logo">OTF Ventures</div>
+    <div class="cover-sub">Data Room · Confidential</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-eyebrow">Partnership Model</div>
+    <div class="cover-title">How We<br>Work With<br><span>{Ωperators}</span></div>
+    <div class="cover-desc">
+      <p>OTF is built as a high-trust partnership between institutional GPs and elite operators — each bringing a distinct edge to the same objective.</p>
+      <p>Operator proximity where it's decisive. Institutional rigour where it's required. Every investment reflects both lenses.</p>
+    </div>
+  </div>
+  <div class="cover-bot"><span>Confidential · Not for distribution</span></div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">How We Work With {Ωperators}</div></div>
+
+  <div class="section-label">The Model</div>
+  <div class="section-title">Operator proximity where it's decisive.<br>Institutional rigour where it's required.</div>
+  <div class="section-rule"></div>
+
+  <div class="card-body">
+    <p>OTF is built as a high-trust partnership between institutional GPs and elite operators — each bringing a distinct edge to the same objective.</p>
+    <p>Operators extend our reach into founder networks, pressure-test opportunities through lived experience, and win allocations through founder-to-founder trust. GPs provide the sourcing infrastructure, co-investor relationships, and fund-level discipline. The two functions are deliberately designed to complement rather than overlap: <strong>operator proximity where it's decisive, institutional rigour where it's required.</strong></p>
+    <p>Every investment reflects both lenses. The result is a model that feels operator-led at the company level, while remaining accountable to the standards of a professionally managed venture fund.</p>
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">Across the investment lifecycle</div><div class="sec-divider-line"></div></div>
+
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th style="width:72px;"></th>
+          <th>GPs</th>
+          <th style="text-transform:uppercase">{Ωperators}</th>
+          <th style="text-transform:uppercase">THE COMBINATION</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Source</td>
+          <td>Systematic market coverage and structured dealflow across the majority of the European market</td>
+          <td>High-context opportunities surfaced through founder networks, domain proximity, and personal signal</td>
+          <td><span class="td-combo">Institutional breadth meets differentiated access</span></td>
+        </tr>
+        <tr>
+          <td>Pick</td>
+          <td>Founder-market fit, return potential, portfolio construction, capital pacing</td>
+          <td>Founder quality, instinct, resilience — assessed through lived experience</td>
+          <td><span class="td-combo">Operator conviction filtered through a multi-stage investment lens</span></td>
+        </tr>
+        <tr>
+          <td>Win</td>
+          <td>Small cheques, fast processes, clean terms — never a blocker; deep long-standing co-investor relationships</td>
+          <td>Founder-to-founder credibility, tactical sparring, early hire introductions</td>
+          <td><span class="td-combo">Speed and clarity externally; tight execution internally</span></td>
+        </tr>
+        <tr>
+          <td>Help</td>
+          <td>Strategic guidance, board dynamics, fundraising support</td>
+          <td>Mentorship, blueprint transfer, design partnerships, first revenue opportunities</td>
+          <td><span class="td-combo">Tactical operator value at the company level; institutional guidance at the fund level</span></td>
+        </tr>
+        <tr>
+          <td>Exit</td>
+          <td>Fund-level return optimisation — converting momentum and market timing into liquidity at the right moments</td>
+          <td>Close founder relationships that surface and unlock exit opportunities</td>
+          <td><span class="td-combo">Case-by-case liquidity decisions grounded in trust and return discipline</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sec-divider"><div class="sec-divider-label">Governance</div><div class="sec-divider-line"></div></div>
+
+  <div class="gov-grid">
+    <div>
+      <div class="stat">
+        <div class="stat-num">49</div>
+        <div class="stat-lbl">Deals done together</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3+</div>
+        <div class="stat-lbl">Years of joint investments</div>
+      </div>
+    </div>
+    <div class="items">
+      <div class="item">
+        <div class="item-title">The only agreements that hold are the ones that don't need to be enforced</div>
+        <div class="item-desc">The only agreements that truly hold are the ones which are mutually beneficial — and that is exactly why we chose this group. We have won 49 deals alongside our {Ωperators} over three years. <strong>That shared history is our security.</strong> Not the paperwork.</div>
+      </div>
+      <div class="item">
+        <div class="item-desc">OTF holds final investment decision-making authority. But the honest version of governance in a model like ours is this: <strong>if we ever had to invoke those rights against our {Ωperators}, the model would already have failed.</strong> We are not protected by the ability to override people we trust — we are protected by having chosen people worth trusting in the first place.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTF Ventures – Track Record</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Trispace:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;500;600;700;800;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --blue:#1a56db; --black:#0a0a0a; --text:#111111; --gray:#444444; --light:#eef1f8; --bg:#f5f6f9; --border:#d8dce8; }
+  body { font-family:'Trispace',sans-serif; background:#fff; width:210mm; margin:0 auto; }
+
+  h1,h2,h3,.cs-num,.os-num,.section-title,.cover-title,.stat-num { font-family:'League Spartan',sans-serif; }
+
+  .page, .cover {
+    width:210mm; min-height:297mm;
+    background:var(--bg);
+    padding:44px 52px;
+    page-break-after:always;
+    display:flex; flex-direction:column;
+    position:relative; overflow:hidden;
+  }
+
+  .page::before, .cover::before { content:''; position:absolute; top:-140px; right:-140px; width:420px; height:420px; border-radius:50%; border:1px solid rgba(26,86,219,0.15); pointer-events:none; }
+  .page::after, .cover::after { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(26,86,219,0.25); pointer-events:none; }
+
+  /* COVER */
+  .cover { justify-content:space-between; }
+  .cover-logo { font-family:'League Spartan',sans-serif; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:5px; }
+  .cover-sub { font-size:11px; color:var(--gray); letter-spacing:1px; }
+  .cover-mid { position:relative; z-index:2; }
+  .cover-eyebrow { font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:18px; }
+  .cover-title { font-size:58px; font-weight:800; color:var(--text); line-height:1.04; letter-spacing:-1.5px; margin-bottom:24px; }
+  .cover-title span { color:var(--blue); }
+  .cover-desc { font-size:13px; color:var(--text); line-height:1.8; max-width:500px; }
+  .cover-desc p+p { margin-top:12px; }
+
+  .cover-stats { display:flex; gap:0; margin-top:44px; position:relative; z-index:2; }
+  .cs { flex:1; padding:20px 24px; background:#fff; border:1px solid var(--border); border-right:none; }
+  .cs:first-child { border-radius:10px 0 0 10px; }
+  .cs:last-child { border-right:1px solid var(--border); border-radius:0 10px 10px 0; }
+  .cs-num { font-size:26px; font-weight:800; color:var(--blue); }
+  .cs-lbl { font-size:10px; color:var(--gray); margin-top:3px; text-transform:uppercase; letter-spacing:1px; }
+  .cover-bot { display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .cover-bot span { font-size:10px; color:var(--gray); letter-spacing:1px; }
+
+  /* PAGE HEADER */
+  .ph { display:flex; justify-content:space-between; align-items:center; margin-bottom:32px; padding-bottom:14px; border-bottom:2px solid var(--blue); position:relative; z-index:2; }
+  .ph-logo { font-family:'League Spartan',sans-serif; font-size:11px; font-weight:700; letter-spacing:3px; color:var(--blue); text-transform:uppercase; }
+  .ph-sec { font-size:10px; color:var(--gray); letter-spacing:1.5px; text-transform:uppercase; }
+
+  /* SECTION LABELS */
+  .section-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:6px; }
+  .section-title { font-size:26px; font-weight:800; color:var(--text); letter-spacing:-0.5px; margin-bottom:6px; }
+  .section-rule { width:48px; height:3px; background:var(--blue); margin-bottom:28px; }
+
+  /* STAT CARD ROW */
+  .stat-row { display:flex; gap:0; margin-bottom:36px; position:relative; z-index:2; }
+  .stat-cell { flex:1; padding:20px 20px; background:#fff; border:1px solid var(--border); border-right:none; }
+  .stat-cell:first-child { border-radius:10px 0 0 10px; }
+  .stat-cell:last-child { border-right:1px solid var(--border); border-radius:0 10px 10px 0; }
+  .stat-num { font-size:24px; font-weight:800; color:var(--blue); letter-spacing:-0.5px; line-height:1; margin-bottom:5px; }
+  .stat-lbl { font-size:10px; color:var(--gray); text-transform:uppercase; letter-spacing:1px; line-height:1.4; }
+
+  /* CONTENT CARD */
+  .card-body { font-size:12.5px; line-height:1.85; color:var(--text); margin-bottom:20px; position:relative; z-index:2; }
+  .card-body p+p { margin-top:10px; }
+  .card-body strong { color:var(--black); font-weight:700; }
+
+  /* PULL QUOTE */
+  .pull-quote { border-left:3px solid var(--blue); padding:16px 22px; margin-bottom:28px; background:#fff; border-radius:0 8px 8px 0; border-top:1px solid var(--border); border-right:1px solid var(--border); border-bottom:1px solid var(--border); position:relative; z-index:2; }
+  .pull-quote p { font-size:13px; font-style:italic; color:var(--text); line-height:1.7; }
+  .pull-quote cite { display:block; margin-top:8px; font-size:10px; font-style:normal; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--gray); }
+
+  /* PILLARS */
+  .pillar { display:grid; grid-template-columns:170px 1fr; gap:36px; padding:24px 0; border-top:1px solid var(--border); position:relative; z-index:2; }
+  .pillar:last-of-type { border-bottom:1px solid var(--border); }
+  .pillar-num { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:6px; }
+  .pillar-title { font-family:'League Spartan',sans-serif; font-size:14px; font-weight:700; color:var(--text); line-height:1.3; }
+  .pillar-body { font-size:12.5px; color:var(--text); line-height:1.82; }
+  .pillar-body strong { color:var(--black); font-weight:700; }
+  .pillar-body p+p { margin-top:10px; }
+
+  /* CASE STUDIES */
+  .cases { display:grid; grid-template-columns:1fr; gap:16px; margin-top:24px; position:relative; z-index:2; }
+  .case { border:1px solid var(--border); border-radius:12px; padding:20px 22px; background:#fff; box-shadow:0 1px 4px rgba(26,86,219,0.05); }
+  .case-tag { font-size:10px; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:1.5px; margin-bottom:6px; }
+  .case-name { font-family:'League Spartan',sans-serif; font-size:20px; font-weight:800; color:var(--text); letter-spacing:-0.3px; margin-bottom:4px; }
+  .case-sub { font-size:10.5px; color:var(--gray); margin-bottom:12px; padding-bottom:12px; border-bottom:1px solid var(--border); }
+  .case-body { font-size:12px; color:var(--text); line-height:1.75; }
+  .case-body strong { color:var(--black); font-weight:700; }
+
+  /* FOOTER */
+  .pf { margin-top:auto; padding-top:16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .pf span { font-size:9.5px; color:var(--gray); }
+  .pf-logo { font-family:'League Spartan',sans-serif; color:var(--blue); font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+
+  @media (max-width: 768px) {
+    body { width: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+    .page, .cover { width: 100%; min-height: auto; padding: 24px 16px; page-break-after: auto; }
+    .page::before, .page::after, .cover::before, .cover::after { display: none; }
+    .cover-title { font-size: 40px; }
+    .section-title { font-size: 22px; }
+    .title-main { font-size: 30px; }
+    .cover-stats, .stat-row, .deal-meta, .op-stats, .cover-bot, .pf, .ph { flex-wrap: wrap; }
+    .ph, .cover-bot, .pf, .op-top, .deal-top { gap: 8px; }
+    .op-tags { flex-wrap: wrap; overflow: visible; }
+    .pillar { grid-template-columns: 1fr; gap: 14px; }
+    .gov-grid, .deal-grid { grid-template-columns: 1fr; gap: 12px; }
+    .channel { grid-template-columns: 1fr; }
+    .ch-num-col { display: none; }
+    .ch-content { margin-left: 0; }
+    .item { flex-direction: column; }
+    .tbl-wrap { overflow-x: hidden; }
+    table { width: 100%; min-width: 0; table-layout: fixed; }
+    th, td { white-space: normal; word-break: break-word; overflow-wrap: anywhere; }
+    .cs, .stat-cell { border-right: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+    body .page > div[style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+  }
+  @media print {
+    body { width:210mm; }
+    .cover, .page { page-break-after:always; }
+    @page { size:A4; margin:0; }
+    .print-btn { display:none; }
+  }
+  .print-btn { position:fixed; bottom:24px; right:24px; background:var(--blue); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; font-family:'League Spartan',sans-serif; box-shadow:0 4px 16px rgba(26,86,219,0.3); z-index:999; }
+  .print-btn:hover { background:#1447c0; }
+</style>
+</head>
+<body>
+<!-- <button class="print-btn" onclick="window.print()">Export as PDF</button> -->
+
+<!-- COVER -->
+<div class="cover">
+  <div style="position:relative;z-index:2;">
+    <div class="cover-logo">OTF Ventures</div>
+    <div class="cover-sub">Data Room · Confidential</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-eyebrow">Blueprint: Halo</div>
+    <div class="cover-title">Track<br>Record<span>.</span></div>
+    <div class="cover-desc">
+      <p>49 investments. 3 years. 3.2x MOIC, 1.2x DPI and a single write off. This is the full account of what we built with Halo — the numbers, the distribution of wins, and the logic behind how we got into the deals that matter.</p>
+      <p>The model is simple: access is the constraint in early-stage investing. We built the engine to solve it by putting the few people in Europe who have successfully built before at the centre of every deal.</p>
+    </div>
+
+  </div>
+  <div class="cover-bot"><span>Confidential · Not for distribution</span></div>
+</div>
+
+<!-- PAGE 1: NUMBERS + DISTRIBUTION -->
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">Section 01 — Track Record</div></div>
+
+  <div class="section-label">Distribution of Wins</div>
+  <div class="section-title">Three years in. A single write off.</div>
+  <div class="section-rule"></div>
+
+  <div class="stat-row">
+    <div class="stat-cell"><div class="stat-num">3 yrs</div><div class="stat-lbl">Fund live</div></div>
+    <div class="stat-cell"><div class="stat-num">3.2x</div><div class="stat-lbl">Gross MOIC</div></div>
+    <div class="stat-cell"><div class="stat-num">51%</div><div class="stat-lbl">IRR</div></div>
+    <div class="stat-cell"><div class="stat-num">1.2x</div><div class="stat-lbl">DPI</div></div>
+    <div class="stat-cell"><div class="stat-num">€12m</div><div class="stat-lbl">Median entry valuation</div></div>
+    <div class="stat-cell"><div class="stat-num">1</div><div class="stat-lbl">Single write off</div></div>
+  </div>
+
+  <div class="card-body">
+    <p>Lovable is 34.5% of gross portfolio value. But we are three years into a pre-seed portfolio and we already have other assets that would headline most funds on their own.</p>
+    <p>Runware. Tandem Health. Elyos. ArgoX. VSIM. These are not markups on paper. They are companies with real traction, strong co-investors, and rounds that closed competitively. In a portfolio that is three years old and mostly still in the early innings, that depth is unusual.</p>
+    <p>The top 10 deals account for ~88% of gross value. The remaining 39 are mostly at cost, mostly unresolved, and mostly still in the early chapters of what they will become. In a power-law asset class, that long tail is not the footnote. It is where the next Lovable is.</p>
+    <p>Three years in. One proven outlier, a cohort of strong performers, and 39 companies whose best chapters have not been written yet.</p>
+  </div>
+
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+<!-- PAGE 2: HOW WE WIN -->
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">Section 02 — Why We Win</div></div>
+
+  <div class="section-label">Why We Win</div>
+  <div class="section-title">Access is the alpha. We built the engine to capture it.</div>
+  <div class="section-rule"></div>
+
+  <div class="card-body" style="margin-bottom:28px;">
+    <p>The best founders do not want another investor. They want someone who has made it. Someone who has taken a company from nothing to scale, made the first uncomfortable hire, and pushed a product into a new market with no playbook. Not advice. Experience. The distinction is everything.</p>
+  </div>
+
+  <div class="pillar">
+    <div>
+      <div class="pillar-num">01</div>
+      <div class="pillar-title">The few who have actually done it</div>
+    </div>
+    <div class="pillar-body">
+      <p>There are thousands of people in Europe who call themselves operators. There are very few who went from zero to scale, raised hundreds of millions, made thousands of hires, navigated every crisis a company can face, and came out the other side with the scar tissue to prove it.</p>
+      <p>Our {Ωperators} sit in that group. $1.2B+ raised collectively, 3,000+ people hired, two public listings. When a founder hits a real inflection point, someone in this group has lived that exact moment. Not in theory. Under pressure, in practice.</p>
+    </div>
+  </div>
+
+  <div class="pillar">
+    <div>
+      <div class="pillar-num">02</div>
+      <div class="pillar-title">Everyone else competes on the same things</div>
+    </div>
+    <div class="pillar-body">
+      <p>Brand. Check size. The promise of a network. In a market with <strong>€59B in European VC dry powder</strong> — up 354% since 2011 — those are commodities. Mega-funds write nine-figure pre-seed cheques for optionality. The best founders in the best rounds no longer optimize for capital. They choose who they want in the room and they choose the people who have lived the journey, not those who analyze it from the outside.</p>
+      <p><strong>Access has become the constraint. OTF exists to solve it.</strong></p>
+    </div>
+  </div>
+
+  <div class="pillar">
+    <div>
+      <div class="pillar-num">03</div>
+      <div class="pillar-title">Other VCs bring us in because we play alongside them</div>
+    </div>
+    <div class="pillar-body">
+      <p>OTF writes small, flexible first cheques. We do not take whole rounds. We do not compete with lead investors for ownership or board seats. Lead funds lead. That is what they do, and it comes with real benefits for founders. But leading a round and managing the operator presence on a cap table are two different things. The latter simply is not part of what a lead does. That gap exists in every institutional round. We fill it.</p>
+      <p>The result: roughly half our deals come directly from other VCs who bring us in because they want our {Ωperators} on the cap table alongside them. We are not competing for a slot. We are filling a need that every round has and that no one else is solving at scale.</p>
+      <p>In 2025 we saw approximately 1,500 deals. The best ones, we were invited into.</p>
+    </div>
+  </div>
+
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+<!-- PAGE 3: CASE STUDIES -->
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">Section 02 — In Practice</div></div>
+
+  <div class="section-label">In Practice</div>
+  <div class="section-title">Three deals that show the model.</div>
+  <div class="section-rule"></div>
+
+  <div class="cases">
+    <div class="case">
+      <div class="case-tag">Operator-led entry; hidden champion</div>
+      <div class="case-name">ArgoX</div>
+      <div class="case-sub">Operator: Patrick Andrae · Lead: Concept Ventures</div>
+      <div class="case-body">
+        <p>The lead investor brought us in. Not for our cheque — because they wanted an operator who had scaled a business across 30+ countries and through every regulatory environment a founder is likely to face beside their founders.</p>
+        <p style="margin-top:10px;">The lead did what leads do. We filled the operator slot alongside them. That is the repeatable pattern.</p>
+      </div>
+    </div>
+    <div class="case">
+      <div class="case-tag">Invited by lead; proven champion</div>
+      <div class="case-name">Lovable</div>
+      <div class="case-sub">Operator: Fredrik &amp; Adam · Co-investors: Creandum, Hummingbird, Accel</div>
+      <div class="case-body">
+        <p>Lovable had already closed its pre-seed round. The founders reopened it specifically to get Fredrik and Adam on the cap table. No process. No auction. An invitation, because they wanted Europe's most respected Nordic operators beside them from day one.</p>
+        <p style="margin-top:10px;">We did not compete for this deal. We were chosen for it. That is the access model working exactly as designed.</p>
+      </div>
+    </div>
+    <div class="case">
+      <div class="case-tag">Conviction without a lead; rising star</div>
+      <div class="case-name">Elyos</div>
+      <div class="case-sub">Operator: Patrick Andrae · Pre-empted by Blackbird ahead of Series A</div>
+      <div class="case-body">
+        <p>Elyos had no lead when we came in. What it had was an exceptional founder building in a space where the timing was right and the ambition was clear. Most funds need a lead to give them permission to act. We had the structure and the conviction to enter without one.</p>
+        <p style="margin-top:10px;">Blackbird's pre-emption ahead of the Series A was the validation. We recognised the talent early, took the risk, and were already on the cap table when the market caught up.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+</body>
+</html>

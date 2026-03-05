@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OTF Ventures – How We Source</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Trispace:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;500;600;700;800;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root { --blue:#1a56db; --text:#111111; --gray:#444444; --light:#eef1f8; --bg:#f5f6f9; --border:#d8dce8; }
+  body { font-family:'Trispace',sans-serif; background:#fff; width:210mm; margin:0 auto; }
+
+  .page, .cover {
+    width:210mm; min-height:297mm;
+    background:var(--bg);
+    padding:44px 52px;
+    page-break-after:always;
+    display:flex; flex-direction:column;
+    position:relative; overflow:hidden;
+  }
+  .page::before, .cover::before { content:''; position:absolute; top:-140px; right:-140px; width:420px; height:420px; border-radius:50%; border:1px solid rgba(26,86,219,0.12); pointer-events:none; }
+  .page::after,  .cover::after  { content:''; position:absolute; top:-80px;  right:-80px;  width:280px; height:280px; border-radius:50%; border:1px solid rgba(26,86,219,0.2); pointer-events:none; }
+
+  /* ── COVER ── */
+  .cover { justify-content:space-between; }
+  .cover-logo { font-family:'League Spartan',sans-serif; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:5px; }
+  .cover-sub  { font-size:11px; color:var(--gray); letter-spacing:1px; }
+  .cover-mid  { position:relative; z-index:2; }
+  .cover-eyebrow { font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:18px; }
+  .cover-title { font-family:'League Spartan',sans-serif; font-size:58px; font-weight:800; color:var(--text); line-height:1.04; letter-spacing:-1.5px; margin-bottom:28px; }
+  .cover-title span { color:var(--blue); }
+  .cover-desc { font-size:13px; color:var(--text); line-height:1.9; max-width:460px; }
+  .cover-desc p+p { margin-top:14px; }
+  .cover-desc a { color:var(--blue); font-weight:600; text-decoration:none; border-bottom:1px solid rgba(26,86,219,0.3); }
+  .cover-bot { display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .cover-bot span { font-size:10px; color:var(--gray); letter-spacing:1px; }
+
+  /* ── PAGE HEADER ── */
+  .ph { display:flex; justify-content:space-between; align-items:center; margin-bottom:36px; padding-bottom:14px; border-bottom:2px solid var(--blue); position:relative; z-index:2; }
+  .ph-logo { font-family:'League Spartan',sans-serif; font-size:11px; font-weight:700; letter-spacing:3px; color:var(--blue); text-transform:uppercase; }
+  .ph-sec  { font-size:10px; color:var(--gray); letter-spacing:1.5px; text-transform:uppercase; }
+
+  /* ── PAGE INTRO ── */
+  .page-intro { margin-bottom:28px; position:relative; z-index:2; }
+  .page-intro-label { font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:6px; }
+  .page-intro-title { font-family:'League Spartan',sans-serif; font-size:22px; font-weight:800; color:var(--text); letter-spacing:-0.4px; }
+
+  /* ── CHANNEL ROWS ── */
+  .channel { display:grid; grid-template-columns:64px 1fr; gap:0; margin-bottom:12px; position:relative; z-index:2; }
+  .channel:last-of-type { margin-bottom:0; }
+
+  /* Number column */
+  .ch-num-col { display:flex; flex-direction:column; align-items:center; padding-top:22px; }
+  .ch-num { font-family:'League Spartan',sans-serif; font-size:28px; font-weight:900; color:var(--blue); opacity:0.18; line-height:1; }
+  .ch-line { width:1px; flex:1; background:var(--border); margin-top:8px; }
+  .channel:last-of-type .ch-line { display:none; }
+
+  /* Content column */
+  .ch-content { background:#fff; border:1px solid var(--border); border-radius:12px; padding:20px 24px; margin-left:8px; margin-bottom:12px; box-shadow:0 1px 4px rgba(26,86,219,0.04); }
+  .ch-label { font-size:9.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--blue); margin-bottom:6px; }
+  .ch-title { font-family:'League Spartan',sans-serif; font-size:16px; font-weight:800; color:var(--text); letter-spacing:-0.2px; margin-bottom:10px; line-height:1.25; }
+  .ch-body { font-size:11.5px; line-height:1.85; color:#333; }
+  .ch-tags { display:flex; flex-wrap:wrap; gap:5px; margin-top:12px; }
+  .tag { background:var(--light); color:var(--blue); font-size:9.5px; font-weight:600; padding:3px 10px; border-radius:20px; border:1px solid rgba(26,86,219,0.18); }
+
+  /* ── CALLOUT BOX ── */
+  .callout { background:var(--blue); border-radius:12px; padding:22px 28px; margin-top:20px; position:relative; z-index:2; overflow:hidden; }
+  .callout::after { content:'Ω'; position:absolute; right:20px; top:50%; transform:translateY(-50%); font-family:'League Spartan',sans-serif; font-size:96px; font-weight:900; color:rgba(255,255,255,0.06); line-height:1; pointer-events:none; }
+  .callout-label { font-size:9.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.55); margin-bottom:8px; }
+  .callout-text { font-family:'League Spartan',sans-serif; font-size:16px; font-weight:700; color:#fff; line-height:1.5; max-width:400px; }
+
+  /* ── FOOTER ── */
+  .pf { margin-top:auto; padding-top:16px; border-top:1px solid var(--border); display:flex; justify-content:space-between; position:relative; z-index:2; }
+  .pf span { font-size:9.5px; color:var(--gray); }
+  .pf-logo { font-family:'League Spartan',sans-serif; color:var(--blue); font-weight:700; letter-spacing:2px; text-transform:uppercase; }
+
+  @media (max-width: 768px) {
+    body { width: 100%; margin: 0; padding: 0; overflow-x: hidden; }
+    .page, .cover { width: 100%; min-height: auto; padding: 24px 16px; page-break-after: auto; }
+    .page::before, .page::after, .cover::before, .cover::after { display: none; }
+    .cover-title { font-size: 40px; }
+    .section-title { font-size: 22px; }
+    .title-main { font-size: 30px; }
+    .cover-stats, .stat-row, .deal-meta, .op-stats, .cover-bot, .pf, .ph { flex-wrap: wrap; }
+    .ph, .cover-bot, .pf, .op-top, .deal-top { gap: 8px; }
+    .op-tags { flex-wrap: wrap; overflow: visible; }
+    .pillar { grid-template-columns: 1fr; gap: 14px; }
+    .gov-grid, .deal-grid { grid-template-columns: 1fr; gap: 12px; }
+    .channel { grid-template-columns: 1fr; }
+    .ch-num-col { display: none; }
+    .ch-content { margin-left: 0; }
+    .item { flex-direction: column; }
+    .tbl-wrap { overflow-x: hidden; }
+    table { width: 100%; min-width: 0; table-layout: fixed; }
+    th, td { white-space: normal; word-break: break-word; overflow-wrap: anywhere; }
+    .cs, .stat-cell { border-right: 1px solid var(--border); border-radius: 10px; margin-bottom: 8px; }
+    body .page > div[style*="grid-template-columns:1fr 1fr 1fr"] { grid-template-columns: 1fr !important; }
+  }
+  @media print {
+    body { width:210mm; }
+    .cover, .page { page-break-after:always; }
+    @page { size:A4; margin:0; }
+    .print-btn { display:none; }
+  }
+  .print-btn { position:fixed; bottom:24px; right:24px; background:var(--blue); color:#fff; border:none; padding:12px 24px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; font-family:'League Spartan',sans-serif; box-shadow:0 4px 16px rgba(26,86,219,0.3); z-index:999; }
+  .print-btn:hover { background:#1447c0; }
+</style>
+</head>
+<body>
+<!-- <button class="print-btn" onclick="window.print()">Export as PDF</button> -->
+
+<!-- COVER -->
+<div class="cover">
+  <div style="position:relative;z-index:2;">
+    <div class="cover-logo">OTF Ventures</div>
+    <div class="cover-sub">Data Room · Confidential</div>
+  </div>
+  <div class="cover-mid">
+    <div class="cover-eyebrow">Sourcing</div>
+    <div class="cover-title">How We<br><span>Source</span></div>
+    <div class="cover-desc">
+      <p>We believe in data. Have a look at a partial copy of our CRM: <a href="https://airtable.com/invite/l?inviteId=invnZhZw7087K5WNJ&inviteToken=7820eb456a3fa61ded131e7a269fd4a65274309dadebf66eff96b8d4e9831472&utm_medium=email&utm_source=product_team&utm_content=transactional-alerts" target="_blank">open it here</a>.</p>
+      <p>It is easy to say we have top coverage. We like to simply show it, in our track record, our CRM, and our committed deals. This is also why so many other GPs are investing alongside us.</p>
+      <p>Dealflow is no magic. Everyone has access to the same data. Data alone is not the advantage. It is a relationship game and we cracked it.</p>
+    </div>
+  </div>
+  <div class="cover-bot"><span>Confidential · Not for distribution</span></div>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">How We Source</div></div>
+
+  <div class="page-intro">
+    <div class="page-intro-label">The sourcing model</div>
+    <div class="page-intro-title">Three relationships. One compounding edge.</div>
+  </div>
+
+  <!-- Channel 01 -->
+  <div class="channel">
+    <div class="ch-num-col">
+      <div class="ch-num">01</div>
+      <div class="ch-line"></div>
+    </div>
+    <div class="ch-content">
+      <div class="ch-title">We started in venture with our entire friendship group</div>
+      <div class="ch-body">We were all at a big fund together, so whenever a lead happened, we always knew first. This is how we got the {Ωperators} on board. Because we were already inside the deal flow, we could invite them into rounds alongside strong lead investors, derisking the bet through the quality of the other participants on the cap table. That gave them a reason to join, and gave us a track record of co-investment that compounded from there.</div>
+
+    </div>
+  </div>
+
+  <!-- Channel 02 -->
+  <div class="channel">
+    <div class="ch-num-col">
+      <div class="ch-num">02</div>
+      <div class="ch-line"></div>
+    </div>
+    <div class="ch-content">
+      <div class="ch-title">~50% of our deals come from other VCs — who are now also our LPs</div>
+      <div class="ch-body">We started becoming known as the operators who actually bring expertise. Operators are not a VC's bread and butter. They need us to fill the allocation they cannot. When a GP closes a round and wants operator presence on the cap table, they call us. They do not see us as a competitor. They see us as the piece they cannot build themselves. This is why so many of our co-investors have now also become LPs.</div>
+
+    </div>
+  </div>
+
+  <!-- Channel 03 -->
+  <div class="channel">
+    <div class="ch-num-col">
+      <div class="ch-num">03</div>
+    </div>
+    <div class="ch-content">
+      <div class="ch-title">New ideas go to market participants first — not VCs</div>
+      <div class="ch-body">If someone has a new idea they go to operators, incumbents and market participants, not investors. Our {Ωperators} sit inside those loops. We hear of new ideas before they ever reach the VC world and then we send them to our VC network. This is why we have very strong GP relationships. We see it first, they get the deal. And we just fit in perfectly: with record dry powder and a retracting growth stage, early-stage became a bidding war and the few people founders still welcome are exactly who we had spent years building.</div>
+
+    </div>
+  </div>
+
+  <div class="callout">
+    <div class="callout-label">The result</div>
+    <div class="callout-text" style="font-family:'Trispace',sans-serif; font-weight:400; font-size:13px;">1,500+ deals in 2025. Not from a database. From relationships built over a decade.</div>
+  </div>
+
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page" style="justify-content:space-between;">
+  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">How We Source</div></div>
+
+  <div class="page-intro">
+    <div class="page-intro-label">The relationship</div>
+    <div class="page-intro-title">Each relationship feeds the next.</div>
+  </div>
+
+  <!-- Three boxes -->
+  <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; position:relative; z-index:2;">
+    <div style="background:#fff; border:1px solid var(--border); border-radius:10px; padding:22px 20px;">
+      <div style="font-family:'Trispace',sans-serif; font-size:11px; font-weight:600; color:#1a56db; margin-bottom:10px; letter-spacing:1px; text-transform:uppercase;">Operators → OTF</div>
+      <div style="font-size:11px; line-height:1.75; color:#333;">New ideas surface with market participants first. Our {Ωperators} sit inside those loops and bring deals to us before VCs ever see them.</div>
+    </div>
+    <div style="background:#fff; border:1px solid var(--border); border-radius:10px; padding:22px 20px;">
+      <div style="font-family:'Trispace',sans-serif; font-size:11px; font-weight:600; color:#1a56db; margin-bottom:10px; letter-spacing:1px; text-transform:uppercase;">OTF → GPs</div>
+      <div style="font-size:11px; line-height:1.75; color:#333;">We send the best deals to our VC network with conviction already formed. We are a sourcing engine for them, not a competitor.</div>
+    </div>
+    <div style="background:#fff; border:1px solid var(--border); border-radius:10px; padding:22px 20px;">
+      <div style="font-family:'Trispace',sans-serif; font-size:11px; font-weight:600; color:#1a56db; margin-bottom:10px; letter-spacing:1px; text-transform:uppercase;">GPs → OTF</div>
+      <div style="font-size:11px; line-height:1.75; color:#333;">GPs share deals back because they need operator presence on the cap table, something they cannot build themselves. ~50% of our deal flow comes this way.</div>
+    </div>
+  </div>
+
+  <div style="height:32px;"></div>
+
+  <!-- Why this beats VC-to-VC -->
+  <div style="background:#fff; border:1px solid var(--border); border-left:4px solid #1a56db; border-radius:10px; padding:28px 32px; position:relative; z-index:2;">
+    <div style="font-size:9.5px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:#1a56db; margin-bottom:12px;">The common layer</div>
+    <div style="font-size:11px; line-height:1.75; color:#333; font-family:'Trispace',sans-serif;">Each of the three channels above works because of one thing: the {Ωperators}. They are why founders let us in before the round is public. They are why GPs call us when they want operator presence on the cap table. And they are why those same GPs become LPs. They sit at the intersection of every relationship in this model, serving a kind of value that the traditional VC cannot replicate and has no incentive to compete with.</div>
+  </div>
+
+  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
+</div>
+
+</body>
+</html>
+
