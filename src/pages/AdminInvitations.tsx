@@ -6,12 +6,21 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Mail, Plus, Trash2, UserPlus, ShieldBan, ShieldCheck, Send, Search } from 'lucide-react';
+import { Mail, Plus, Trash2, UserPlus, ShieldBan, ShieldCheck, Send, Search, Check, X } from 'lucide-react';
 import { format } from 'date-fns';
 
 type AppRole = 'admin' | 'viewer';
 type UserStatus = 'pending' | 'active' | 'blocked';
-type Tab = 'viewers' | 'admins';
+type Tab = 'viewers' | 'admins' | 'requests';
+
+interface AccessRequest {
+  id: string;
+  email: string;
+  full_name: string | null;
+  message: string | null;
+  status: 'pending' | 'approved' | 'rejected';
+  created_at: string;
+}
 
 interface ManagedUser {
   id: string;
@@ -40,6 +49,7 @@ const STATUS_COLOR: Record<UserStatus, string> = {
 export default function AdminInvitations() {
   const { user } = useAuth();
   const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [requests, setRequests] = useState<AccessRequest[]>([]);
   const [activeTab, setActiveTab] = useState<Tab>('viewers');
   const [newEmail, setNewEmail] = useState('');
   const [inviteRole, setInviteRole] = useState<AppRole>('viewer');
@@ -67,20 +77,29 @@ export default function AdminInvitations() {
     return 'Request failed.';
   };
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => { void fetchAll(); }, []);
 
-  const fetchUsers = async () => {
+  const fetchAll = async () => {
     try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('id, user_id, email, full_name, role, status, created_at, magic_link_sent_count, magic_link_clicked_count')
-        .order('created_at', { ascending: false });
-      if (error) {
-        setActionError(error.message);
-        toast.error(`Failed to load users: ${error.message}`);
-        return;
+      const [usersRes, requestsRes] = await Promise.all([
+        supabase
+          .from('users')
+          .select('id, user_id, email, full_name, role, status, created_at, magic_link_sent_count, magic_link_clicked_count')
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('access_requests')
+          .select('id, email, full_name, message, status, created_at')
+          .order('created_at', { ascending: false }),
+      ]);
+      if (usersRes.error) {
+        setActionError(usersRes.error.message);
+        toast.error(`Failed to load users: ${usersRes.error.message}`);
+      } else {
+        setUsers((usersRes.data ?? []) as ManagedUser[]);
       }
-      setUsers((data ?? []) as ManagedUser[]);
+      if (!requestsRes.error) {
+        setRequests((requestsRes.data ?? []) as AccessRequest[]);
+      }
     } finally {
       setLoading(false);
     }
@@ -208,6 +227,74 @@ export default function AdminInvitations() {
     setActioningId(null);
   };
 
+  const handleApproveRequest = async (req: AccessRequest) => {
+    setActioningId(req.id);
+    setActionError('');
+    setManualInviteLink('');
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+    if (!accessToken) {
+      toast.error('Your session expired. Please sign in again.');
+      setActioningId(null);
+      return;
+    }
+
+    const { data, error } = await supabase.functions.invoke('send-invitation', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: {
+        email: req.email,
+        role: 'viewer',
+        redirectTo: `${window.location.origin}/magic-auth`,
+        ...(req.full_name ? { full_name: req.full_name } : {}),
+      },
+    });
+
+    if (error) {
+      const message = await getFunctionErrorMessage(error);
+      toast.error(message);
+      setActioningId(null);
+      return;
+    }
+
+    // Mark the request as approved
+    const { error: updateError } = await supabase
+      .from('access_requests')
+      .update({ status: 'approved', reviewed_by: user!.id, reviewed_at: new Date().toISOString() })
+      .eq('id', req.id);
+
+    if (updateError) {
+      toast.error(updateError.message);
+    } else {
+      setRequests((prev) => prev.map((r) => r.id === req.id ? { ...r, status: 'approved' } : r));
+      if (data?.emailSent === false && typeof data.inviteLink === 'string') {
+        setManualInviteLink(data.inviteLink);
+        toast.warning(`Approved. Email failed — share the manual link.`);
+      } else {
+        toast.success(`Approved and magic link sent to ${req.email}`);
+      }
+    }
+    setActioningId(null);
+  };
+
+  const handleRejectRequest = async (req: AccessRequest) => {
+    setActioningId(req.id);
+    setActionError('');
+
+    const { error } = await supabase
+      .from('access_requests')
+      .update({ status: 'rejected', reviewed_by: user!.id, reviewed_at: new Date().toISOString() })
+      .eq('id', req.id);
+
+    if (error) {
+      toast.error(error.message);
+    } else {
+      setRequests((prev) => prev.map((r) => r.id === req.id ? { ...r, status: 'rejected' } : r));
+      toast.success(`Request from ${req.email} rejected.`);
+    }
+    setActioningId(null);
+  };
+
   const handleDelete = async (u: ManagedUser) => {
     setActioningId(u.id);
     setActionError('');
@@ -261,6 +348,7 @@ export default function AdminInvitations() {
 
   const viewers = users.filter((u) => u.role === 'viewer');
   const admins  = users.filter((u) => u.role === 'admin');
+  const pendingRequests = requests.filter((r) => r.status === 'pending');
   const baseUsers = activeTab === 'viewers' ? viewers : admins;
   const searchLower = search.trim().toLowerCase();
   const tabUsers = searchLower
@@ -269,10 +357,17 @@ export default function AdminInvitations() {
         (u.full_name ?? '').toLowerCase().includes(searchLower)
       )
     : baseUsers;
+  const filteredRequests = searchLower
+    ? requests.filter((r) =>
+        r.email.toLowerCase().includes(searchLower) ||
+        (r.full_name ?? '').toLowerCase().includes(searchLower)
+      )
+    : requests;
 
-  const tabs: { key: Tab; label: string; count: number }[] = [
-    { key: 'viewers', label: 'Viewers', count: viewers.length },
-    { key: 'admins',  label: 'Admins',  count: admins.length },
+  const tabs: { key: Tab; label: string; count: number; badge?: number }[] = [
+    { key: 'viewers',  label: 'Viewers',  count: viewers.length },
+    { key: 'admins',   label: 'Admins',   count: admins.length },
+    { key: 'requests', label: 'Requests', count: requests.length, badge: pendingRequests.length },
   ];
 
   return (
@@ -354,16 +449,21 @@ export default function AdminInvitations() {
             <button
               key={tab.key}
               onClick={() => { setActiveTab(tab.key); setSearch(''); }}
-              className={`px-5 py-2.5 text-sm font-display font-bold tracking-wide transition-colors border-b-2 -mb-px ${
+              className={`px-5 py-2.5 text-sm font-display font-bold tracking-wide transition-colors border-b-2 -mb-px flex items-center gap-1.5 ${
                 activeTab === tab.key
                   ? 'border-primary text-primary'
                   : 'border-transparent text-muted-foreground hover:text-foreground'
               }`}
             >
               {tab.label}
-              <span className={`ml-2 text-xs font-body ${activeTab === tab.key ? 'text-primary' : 'text-muted-foreground'}`}>
+              <span className={`text-xs font-body ${activeTab === tab.key ? 'text-primary' : 'text-muted-foreground'}`}>
                 {tab.count}
               </span>
+              {tab.badge != null && tab.badge > 0 && (
+                <span className="ml-0.5 inline-flex items-center justify-center h-4 min-w-4 px-1 rounded-full bg-primary text-white text-[10px] font-bold font-body">
+                  {tab.badge}
+                </span>
+              )}
             </button>
           ))}
         </div>
@@ -379,8 +479,78 @@ export default function AdminInvitations() {
           />
         </div>
 
-        {/* Column headers */}
-        {tabUsers.length > 0 && (
+        {/* Requests tab */}
+        {activeTab === 'requests' && (
+          <div className="space-y-1.5">
+            {filteredRequests.length === 0 && (
+              <div className="glass-card px-5 py-10 text-center text-muted-foreground font-body text-sm">
+                No access requests yet.
+              </div>
+            )}
+            {filteredRequests.map((req, i) => {
+              const isActioning = actioningId === req.id;
+              const isPending = req.status === 'pending';
+              return (
+                <div
+                  key={req.id}
+                  className="glass-card px-4 sm:px-5 py-3.5 animate-fade-in"
+                  style={{ animationDelay: `${i * 40}ms` }}
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className="text-sm font-body font-semibold text-foreground truncate">
+                          {req.full_name || req.email}
+                        </span>
+                        <span className={`text-[10px] font-body font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                          req.status === 'pending'
+                            ? 'bg-yellow-100 text-yellow-700'
+                            : req.status === 'approved'
+                            ? 'bg-primary/10 text-primary'
+                            : 'bg-destructive/10 text-destructive'
+                        }`}>
+                          {req.status}
+                        </span>
+                      </div>
+                      {req.full_name && (
+                        <div className="text-[11px] text-muted-foreground font-body truncate">{req.email}</div>
+                      )}
+                      {req.message && (
+                        <div className="text-[11px] text-muted-foreground font-body mt-1 line-clamp-2 italic">"{req.message}"</div>
+                      )}
+                      <div className="text-[10px] text-muted-foreground font-body mt-0.5">
+                        {format(new Date(req.created_at), 'MMM d, yyyy')}
+                      </div>
+                    </div>
+                    {isPending && (
+                      <div className="flex items-center gap-1 shrink-0">
+                        <button
+                          onClick={() => handleApproveRequest(req)}
+                          disabled={isActioning}
+                          title="Approve and send magic link"
+                          className="p-1.5 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors disabled:opacity-40"
+                        >
+                          <Check className="h-3.5 w-3.5" />
+                        </button>
+                        <button
+                          onClick={() => handleRejectRequest(req)}
+                          disabled={isActioning}
+                          title="Reject request"
+                          className="p-1.5 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors disabled:opacity-40"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Column headers (users tabs) */}
+        {activeTab !== 'requests' && tabUsers.length > 0 && (
           <div className="grid grid-cols-[1fr_80px_80px_88px] gap-x-4 px-4 sm:px-5 mb-1">
             <div className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-wider">User</div>
             <div className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-wider">Status</div>
@@ -390,6 +560,7 @@ export default function AdminInvitations() {
         )}
 
         {/* User rows */}
+        {activeTab !== 'requests' && (
         <div className="space-y-1.5">
           {tabUsers.map((u, i) => {
             const isSelf = u.user_id === user?.id;
@@ -473,6 +644,7 @@ export default function AdminInvitations() {
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   );
