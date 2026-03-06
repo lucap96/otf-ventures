@@ -22,11 +22,25 @@ export default function AcceptInvite() {
   useEffect(() => {
     const bootstrapInvite = async () => {
       try {
+        const queryParams = new URLSearchParams(window.location.search);
+        const tokenHash = queryParams.get('token_hash');
         const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
         const accessToken = hashParams.get('access_token');
         const refreshToken = hashParams.get('refresh_token');
 
-        if (accessToken && refreshToken) {
+        if (tokenHash) {
+          // Magic-link style invite (token_hash in query string)
+          window.history.replaceState({}, document.title, '/accept-invite');
+          const { error: verifyError } = await supabase.auth.verifyOtp({
+            token_hash: tokenHash,
+            type: 'magiclink',
+          });
+          if (verifyError) {
+            setError(verifyError.message);
+            return;
+          }
+        } else if (accessToken && refreshToken) {
+          // Legacy hash-based tokens
           const { error: setSessionError } = await supabase.auth.setSession({
             access_token: accessToken,
             refresh_token: refreshToken,
