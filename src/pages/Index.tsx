@@ -2,6 +2,7 @@ import { ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import { downloadNativePagesAsPdf } from '@/lib/pdfDownload';
+import { useAnalytics } from '@/hooks/useAnalytics';
 
 type DataRoomItem = {
   number: string;
@@ -27,8 +28,8 @@ const sections: DataRoomSection[] = [
         number: "01",
         id: "long-deck",
         title: "The OTF Deck",
-        description: "The full pitch - thesis, model, market, team.",
-        href: "https://docsend.com/view/xsfzbimm3qdvtcdv",
+        description: "The full pitch – thesis, model, market, team.",
+        href: "https://docsend.com/v/x8np8/otfmar26",
       },
     ],
   },
@@ -40,8 +41,8 @@ const sections: DataRoomSection[] = [
         number: "02",
         id: "in-numbers",
         title: "Deals in Numbers",
-        description: "49 investments, 3.2x MOIC, 1.2x DPI - the full picture.",
-        href: "https://docs.google.com/spreadsheets/d/1c0zREYWLCO_rwHuahqN84zLJwzEMQY2xxoErGzSSuH0/edit?gid=0#gid=0",
+        description: "49 investments, 3.2x MOIC, 1.2x DPI – the full picture.",
+        href: "https://docs.google.com/spreadsheets/d/1c0zREYWLCO_rwHuahqN84zLJwzEMQY2xxoErGzSSuH0/edit?usp=sharing",
       },
       {
         number: "03",
@@ -56,7 +57,7 @@ const sections: DataRoomSection[] = [
     label: "The {Ωperators}",
     items: [
       { number: "04", title: "Who They Are & Why They Win", description: "Bios, track records, and the capability matrix.", to: "/operators/our-operators" },
-      { number: "05", title: "How We Work With Them", description: "The day-to-day model - sourcing, support, and engagement.", to: "/operators/how-we-work-together" },
+      { number: "05", title: "How We Work With Them", description: "The day-to-day model – sourcing, support, and engagement.", to: "/operators/how-we-work-together" },
       { number: "06", title: "Incentive Structure", description: "GP buy-in, carry allocation, and why this is not a scout fund.", to: "/operators/operator-incentives" },
     ],
   },
@@ -68,8 +69,8 @@ const sections: DataRoomSection[] = [
         number: "07",
         id: "model",
         title: "Fund Model",
-        description: "Live model - adjust assumptions and run your own scenarios.",
-        href: "https://docs.google.com/spreadsheets/d/1FWXf2pkKaMxaKej9S3d0QoLHXt4bwvk6/edit?rtpof=true&sd=true&gid=1596136530#gid=1596136530",
+        description: "Live model – adjust assumptions and run your own scenarios.",
+        href: "https://docs.google.com/spreadsheets/d/1nx8rpBGn2rg7S7je5drT1xiebyEqgp6-/edit?gid=1260340685#gid=1260340685",
       },
       { number: "08", id: "walk-through", title: "Model Walkthrough", description: "The logic behind OTF.", to: "/fund-model/walk-through" },
       { number: "09", title: "Exit Strategy & Liquidity", description: "How we think about secondaries, DPI, and returning capital to LPs.", to: "/fund-model/exit-strategy-liquidity" },
@@ -87,7 +88,7 @@ const sections: DataRoomSection[] = [
     label: "Legals & Admin",
     id: "legals",
     items: [
-      { number: "12", id: "fund-terms", title: "Fund Terms", description: "Mgmt fee cap 15%, 3 yr investment period, 8 yr fund life", to: "/legals/fund-terms" },
+      { number: "12", id: "fund-terms", title: "Fund Terms", description: "Mgmt fee cap 15% · 3 yr investment period · 8 yr fund life · 20% carry up to 3x DPI, then 25%", to: "/legals/fund-terms" },
       { number: "13", id: "subscription-agreement", title: "Subscription Agreement", description: "The formal commitment document.", to: "/legals/subscription-agreement" },
       { number: "14", id: "fund-structure-setup", title: "Fund Structure & Setup", description: "Luxembourg domicile · Legal: CMS · Fund admin: Brightpoint · Compliance: AQ", to: "/legals/fund-structure-setup" },
     ],
@@ -95,6 +96,7 @@ const sections: DataRoomSection[] = [
 ];
 
 export default function Index() {
+  const { trackExternalLink } = useAnalytics();
   const [isExportingPdf, setIsExportingPdf] = useState(false);
 
   const handleExportPdf = async () => {
@@ -188,6 +190,7 @@ export default function Index() {
                             href={item.href}
                             target="_blank"
                             rel="noopener noreferrer"
+                            onClick={() => void trackExternalLink(item.title, item.href!)}
                             className="inline-flex items-center gap-1.5 text-primary hover:underline"
                           >
                             {item.title}

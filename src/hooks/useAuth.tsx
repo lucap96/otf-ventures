@@ -23,32 +23,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [roleLoading, setRoleLoading] = useState(false);
   const lastSessionSignature = useRef<string | null>(null);
 
-  const checkAdmin = async (userId: string) => {
+  const fetchUserRecord = async (userId: string) => {
     setRoleLoading(true);
     try {
-      const roleResult = await Promise.race([
+      const result = await Promise.race([
         supabase
-          .from('user_roles')
-          .select('role')
+          .from('users')
+          .select('role, status')
           .eq('user_id', userId)
-          .eq('role', 'admin')
           .maybeSingle(),
         new Promise<never>((_, reject) => {
-          setTimeout(() => reject(new Error('Timed out while checking admin role')), 5000);
+          setTimeout(() => reject(new Error('Timed out while checking user record')), 5000);
         }),
       ]);
-
-      if (roleResult.error) {
-        console.error('Failed to check admin role:', roleResult.error);
+      if (result.error) {
+        console.error('Failed to fetch user record:', result.error);
+        return null;
       }
-
-      const isAdminUser = !!roleResult.data;
-      setIsAdmin(isAdminUser);
-      return isAdminUser;
+      return result.data;
     } catch (error) {
-      console.error('Failed to resolve admin role:', error);
-      setIsAdmin(false);
-      return false;
+      console.error('Failed to resolve user record:', error);
+      return null;
     } finally {
       setRoleLoading(false);
     }
@@ -57,10 +52,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const trackLogin = async (userId: string, sessionToken?: string) => {
     if (sessionToken && typeof window !== 'undefined') {
       const dedupeKey = `analytics:last_login_token:${userId}`;
-      if (window.sessionStorage.getItem(dedupeKey) === sessionToken) {
-        return;
-      }
-      window.sessionStorage.setItem(dedupeKey, sessionToken);
+      if (window.localStorage.getItem(dedupeKey) === sessionToken) return;
+      window.localStorage.setItem(dedupeKey, sessionToken);
     }
 
     const { error } = await supabase.from('analytics_events').insert({
@@ -81,26 +74,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!mounted) return;
 
       const signature = nextSession ? `${nextSession.user.id}:${nextSession.access_token}` : 'signed_out';
-      if (signature === lastSessionSignature.current) {
-        return;
-      }
+      if (signature === lastSessionSignature.current) return;
       lastSessionSignature.current = signature;
 
-      setSession(nextSession);
-      setUser(nextSession?.user ?? null);
-
-      if (nextSession?.user) {
-        void (async () => {
-          const isAdminUser = await checkAdmin(nextSession.user.id);
-          if (!mounted) return;
-          if (event === 'SIGNED_IN' && !isAdminUser) {
-            void trackLogin(nextSession.user.id, nextSession.access_token);
-          }
-        })();
-      } else {
+      if (!nextSession?.user) {
+        setSession(null);
+        setUser(null);
         setIsAdmin(false);
         setRoleLoading(false);
+        return;
       }
+
+      // Set session immediately so auth calls (signIn, updateUser) aren't blocked.
+      // Supabase JS v2 awaits onAuthStateChange callbacks — doing a DB query here
+      // deadlocks the client. Defer the access check via setTimeout to escape the
+      // notifyAllSubscribers execution context.
+      setSession(nextSession);
+      setUser(nextSession.user);
+      // Keep roleLoading true until the deferred check resolves so that
+      // adminOnly ProtectedRoute shows a spinner instead of redirecting to "/".
+      setRoleLoading(true);
+
+      const capturedEvent = event;
+      const capturedSession = nextSession;
+      setTimeout(() => {
+        if (!mounted) return;
+        void (async () => {
+          const record = await fetchUserRecord(capturedSession.user.id);
+          if (!mounted) return;
+
+          if (!record || record.status === 'blocked') {
+            window.sessionStorage.setItem(
+              'auth:signout_reason',
+              !record
+                ? 'This account no longer exists. Contact an administrator.'
+                : 'Your access has been revoked. Please contact an administrator.',
+            );
+            await supabase.auth.signOut();
+            return;
+          }
+
+          const isAdminUser = record.role === 'admin' && record.status === 'active';
+          setIsAdmin(isAdminUser);
+
+          if (capturedEvent === 'SIGNED_IN' && !isAdminUser) {
+            void trackLogin(capturedSession.user.id, capturedSession.access_token);
+          }
+        })();
+      }, 0);
     };
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -131,36 +152,82 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // Force-logout a user who is already logged in and gets blocked by an admin.
+  useEffect(() => {
+    if (!user?.id) return;
+
+    const channel = supabase
+      .channel(`user-access-watch:${user.id}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'users',
+          filter: `user_id=eq.${user.id}`,
+        },
+        (payload) => {
+          const status = (payload.new as { status: string }).status;
+          if (status === 'blocked') {
+            window.sessionStorage.setItem('auth:signout_reason', 'Your access has been revoked. Please contact an administrator.');
+            void supabase.auth.signOut();
+          }
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'users',
+          filter: `user_id=eq.${user.id}`,
+        },
+        () => {
+          window.sessionStorage.setItem('auth:signout_reason', 'This account no longer exists. Contact an administrator.');
+          void supabase.auth.signOut();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      void supabase.removeChannel(channel);
+    };
+  }, [user?.id]);
+
   const signIn = async (email: string, password: string) => {
     const normalizedEmail = email.trim().toLowerCase();
     const { data, error } = await supabase.auth.signInWithPassword({ email: normalizedEmail, password });
-    if (error || !data.user) return { error };
 
-    const userEmail = (data.user.email ?? normalizedEmail).toLowerCase();
-    const [adminResult, invitedResult] = await Promise.all([
-      supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', data.user.id)
-        .eq('role', 'admin')
-        .maybeSingle(),
-      supabase.rpc('is_invited', { check_email: userEmail }),
-    ]);
-
-    if (adminResult.error) {
-      console.error('Failed to check admin access during sign-in:', adminResult.error);
+    if (error || !data.user) {
+      const { data: inviteStatus } = await supabase.rpc('get_invite_status', { check_email: normalizedEmail });
+      if (!inviteStatus) {
+        return { error: { message: 'This email has not been invited. Contact an administrator to request access.' } };
+      }
+      if (inviteStatus === 'pending') {
+        return { error: { message: 'You have been invited but have not completed registration yet. Check your email for the invitation link.' } };
+      }
+      return { error };
     }
 
-    if (invitedResult.error) {
+    const { data: userRecord, error: userRecordError } = await supabase
+      .from('users')
+      .select('role, status')
+      .eq('user_id', data.user.id)
+      .maybeSingle();
+
+    if (userRecordError) {
       await supabase.auth.signOut();
-      return { error: { message: 'Unable to verify invitation status. Please try again.' } };
+      return { error: { message: 'Unable to verify account status. Please try again.' } };
     }
 
-    const isAdminUser = !!adminResult.data;
-    const isInvitedUser = !!invitedResult.data;
-    if (!isAdminUser && !isInvitedUser) {
+    if (!userRecord) {
       await supabase.auth.signOut();
-      return { error: { message: 'Your account is not invited to this application.' } };
+      return { error: { message: 'This email has not been invited. Contact an administrator to request access.' } };
+    }
+
+    if (userRecord.status === 'blocked') {
+      await supabase.auth.signOut();
+      return { error: { message: 'Your access has been revoked. Please contact an administrator.' } };
     }
 
     return { error: null };

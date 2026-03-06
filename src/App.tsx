@@ -18,9 +18,11 @@ import FundModelWalkThrough from "@/pages/FundModelWalkThrough";
 import FundModelExitStrategy from "@/pages/FundModelExitStrategy";
 import Sourcing from "@/pages/Sourcing";
 import CommittedDeals2026 from "@/pages/CommittedDeals2026";
+import SourcingCRM from "@/pages/SourcingCRM";
 import LegalFundTerms from "@/pages/LegalFundTerms";
 import LegalSubscriptionAgreement from "@/pages/LegalSubscriptionAgreement";
 import LegalFundStructureSetup from "@/pages/LegalFundStructureSetup";
+import LegalDisclaimer from "@/pages/LegalDisclaimer";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminInvitations from "@/pages/AdminInvitations";
 import NotFound from "./pages/NotFound";
@@ -47,10 +49,12 @@ const App = () => (
               <Route path="/fund-model/walk-through" element={<FundModelWalkThrough />} />
               <Route path="/fund-model/exit-strategy-liquidity" element={<FundModelExitStrategy />} />
               <Route path="/sourcing" element={<Sourcing />} />
+              <Route path="/sourcing/crm" element={<SourcingCRM />} />
               <Route path="/committed-deals-2026" element={<CommittedDeals2026 />} />
               <Route path="/legals/fund-terms" element={<LegalFundTerms />} />
               <Route path="/legals/subscription-agreement" element={<LegalSubscriptionAgreement />} />
               <Route path="/legals/fund-structure-setup" element={<LegalFundStructureSetup />} />
+              <Route path="/legals/disclaimer" element={<LegalDisclaimer />} />
               <Route path="/track-record/in-words" element={<TrackRecordInWords />} />
               <Route path="/admin/analytics" element={<ProtectedRoute adminOnly><AdminAnalytics /></ProtectedRoute>} />
               <Route path="/admin/invitations" element={<ProtectedRoute adminOnly><AdminInvitations /></ProtectedRoute>} />

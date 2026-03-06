@@ -8,11 +8,13 @@
   @import url('https://fonts.googleapis.com/css2?family=Trispace:wght@300;400;500;600;700;800&family=League+Spartan:wght@400;500;600;700;800;900&display=swap');
   * { margin:0; padding:0; box-sizing:border-box; }
   :root { --blue:#1a56db; --text:#111111; --gray:#444444; --light:#eef1f8; --bg:#f5f6f9; --border:#d8dce8; }
-  body { font-family:'Trispace',sans-serif; background:#fff; width:210mm; margin:0 auto; }
+  html { background: #f5f6f9; }
+  body { font-family:'Trispace',sans-serif; background:#f5f6f9; width:210mm; margin:0 auto; }
   h1,h2,h3,.ph-logo,.pf-logo,.cover-logo,.cover-title,.cs-num { font-family:'League Spartan',sans-serif; }
-  .page, .cover { width:210mm; min-height:297mm; background:var(--bg); padding:44px 52px; page-break-after:always; display:flex; flex-direction:column; position:relative; overflow:hidden; }
-  .page::before, .cover::before { content:''; position:absolute; top:-140px; right:-140px; width:420px; height:420px; border-radius:50%; border:1px solid rgba(26,86,219,0.15); pointer-events:none; }
-  .page::after, .cover::after { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(26,86,219,0.25); pointer-events:none; }
+  .cover { width:210mm; min-height:297mm; background:var(--bg); padding:44px 52px; page-break-after:always; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+  .page { width:210mm; background:var(--bg); padding:44px 52px; display:flex; flex-direction:column; position:relative; overflow:hidden; }
+  .cover::before { content:''; position:absolute; top:-140px; right:-140px; width:420px; height:420px; border-radius:50%; border:1px solid rgba(26,86,219,0.15); pointer-events:none; }
+  .cover::after { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(26,86,219,0.25); pointer-events:none; }
   .cover { justify-content:space-between; }
   .cover-logo { font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:5px; }
   .cover-sub { font-size:11px; color:var(--gray); letter-spacing:1px; }
@@ -38,7 +40,8 @@
   .dm-lbl { font-size:8px; color:var(--gray); text-transform:uppercase; letter-spacing:0.8px; margin-top:2px; }
   .deal-tagline { font-size:11.5px; color:var(--gray); font-style:italic; line-height:1.65; padding-left:12px; border-left:3px solid var(--blue); margin-bottom:12px; }
   .deal-divider { height:1px; background:var(--border); margin-bottom:12px; }
-  .deal-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px 20px; margin-bottom:14px; }
+  .deal-grid { display:flex; gap:20px; margin-bottom:14px; }
+  .deal-col { display:flex; flex-direction:column; gap:12px; flex:1; }
   .dg-label { font-size:8.5px; font-weight:700; letter-spacing:1.5px; text-transform:uppercase; color:var(--blue); margin-bottom:3px; }
   .dg-val { font-size:11px; line-height:1.65; color:var(--text); }
 
@@ -99,7 +102,7 @@
     <div class="deal-top">
       <div>
         <div class="deal-num">Deal 01</div>
-        <div class="deal-name">AI for Returns</div>
+        <div class="deal-name">AI for Returns Management</div>
       </div>
       <div class="deal-meta">
         <div class="dm"><div class="dm-num">$2M</div><div class="dm-lbl">Round</div></div>
@@ -110,10 +113,9 @@
     <div class="deal-tagline">The kind of founder who decided, very early, they were going to do this regardless of what anyone said. And then did it.</div>
     <div class="deal-divider"></div>
     <div class="deal-grid">
-      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Seedcamp · Yellow</div></div>
-      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Personal endorsement from a portfolio founder. Not a warm intro, a direct vouch from someone who had seen our work up close.</div></div>
       <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">21 years old. Walked away from university at 19 to join a YC-backed company as a builder. The kind of conviction that does not come from a CV. It comes from someone who simply cannot imagine doing anything else.</div></div>
-      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">Five term sheets on the table. Round massively oversubscribed. We were chosen, not allocated a slot.</div></div>
+      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Personal endorsement from a portfolio founder. Not a warm intro, a direct vouch from someone who had seen our work up close.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">Five term sheets on the table. Round massively oversubscribed. We were chosen, not allocated a slot. <strong>Co-investors: Seedcamp and Yellow.</strong></div></div>
     </div>
   </div>
   <div class="deal">
@@ -128,20 +130,14 @@
         <div class="dm"><div class="dm-num">3</div><div class="dm-lbl">Term sheets</div></div>
       </div>
     </div>
-    <div class="deal-tagline">A rare double: credibility and an audience that actually listens. Built through doing, not talking.</div>
+    <div class="deal-tagline">A rare combination: credibility and an audience that actually listens. Built through doing, not talking.</div>
     <div class="deal-divider"></div>
     <div class="deal-grid">
-      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Lightspeed</div></div>
-      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Two Tier 1 funds, both OTF LPs, called us directly. They wanted us in the round alongside them. We did not knock. We were invited.</div></div>
       <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">Experienced startup operator and a respected voice in hardware and embedded systems. A following built through shipping, not posting. Does not need to explain the problem. They have already lived it, fixed it, and are building the permanent solution.</div></div>
-      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">Multiple US term sheets. We got our allocation as Dexory is one of the leaders for Hardware in Europe.</div></div>
+      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Two Tier 1 funds, both OTF LPs, called us directly. They wanted us in the round alongside them. We did not knock. We were invited.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">Multiple US term sheets. We got our allocation as Dexory is one of the leaders for Hardware in Europe. <strong>Co-investors: Lightspeed.</strong></div></div>
     </div>
   </div>
-  <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution</span></div>
-</div>
-
-<div class="page">
-  <div class="ph"><div class="ph-logo">OTF Ventures</div><div class="ph-sec">2026 Committed Deals</div></div>
   <div class="deal">
     <div class="deal-top">
       <div>
@@ -157,10 +153,9 @@
     <div class="deal-tagline">Watched one of Europe's most consequential fintech stories from the inside. Left to build the layer that was always missing.</div>
     <div class="deal-divider"></div>
     <div class="deal-grid">
-      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Cherry Ventures</div></div>
-      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Deep network proximity to the founder's former employer. The kind of relationship that puts you in front of a founder before they are pitching anyone else.</div></div>
       <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">Former Head of Product at one of Europe's defining fintech stories. Understood the whitespace before anyone outside could see it. Left with the distribution advantage already baked in: the relationships, the credibility, and a customer pipeline that would take any outsider five years to build.</div></div>
-      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">Multiple term sheets from European multistage funds. Cherry led. The round did not need us. They wanted us specifically on the cap table.</div></div>
+      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Deep network proximity to the founder's former employer. The kind of relationship that puts you in front of a founder before they are pitching anyone else.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">Multiple term sheets from European multistage funds. Cherry led. The round did not need us. They wanted us specifically on the cap table. <strong>Co-investors: Cherry Ventures.</strong></div></div>
     </div>
   </div>
   <div class="deal">
@@ -178,31 +173,29 @@
     <div class="deal-tagline">A founder who did not need a lead investor. They needed the right door opened. We opened it.</div>
     <div class="deal-divider"></div>
     <div class="deal-grid">
-      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Angels only. No institutional capital sought or needed.</div></div>
-      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">We made the introduction that unlocked the deal. Our network was the product here, not the capital. The founder came to us because of what we could open, not what we could write.</div></div>
       <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">A senior operator who spent years inside one of the startups shaking up the market, building the infrastructure that private markets run on. He did not just understand the problem from the outside. He lived inside it. The kind of domain expertise that cannot be manufactured.</div></div>
-      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">No institutional competition. Round structured to stay tight and deliberate. This is what it looks like when a founder does not need the money. They need the right people. We were those people.</div></div>
+      <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">We made the introduction that unlocked the deal. Our network was the product here, not the capital. The founder came to us because of what we could open, not what we could write.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">No institutional competition. Round structured to stay tight and deliberate. This is what it looks like when a founder does not need the money. They need the right people. We were those people. <strong>Angels only, no institutional capital sought or needed.</strong></div></div>
     </div>
   </div>
   <div class="deal">
     <div class="deal-top">
       <div>
         <div class="deal-num">Deal 05</div>
-        <div class="deal-name">Defence and Deep Industry Infrastructure</div>
+        <div class="deal-name">Sovereignty and Deep Industry Infrastructure</div>
       </div>
       <div class="deal-meta">
-        <div class="dm"><div class="dm-num">$700K</div><div class="dm-lbl">Round</div></div>
-        <div class="dm"><div class="dm-num">$6M</div><div class="dm-lbl">Post-money</div></div>
+        <div class="dm"><div class="dm-num">&#163;700K</div><div class="dm-lbl">Round</div></div>
+        <div class="dm"><div class="dm-num">&#163;6M</div><div class="dm-lbl">Post-money</div></div>
         <div class="dm"><div class="dm-num">Seedcamp</div><div class="dm-lbl">Lead</div></div>
       </div>
     </div>
     <div class="deal-tagline">Completely committed to a space most investors still do not understand. Does not play by the rules because the rules were not written for people this convicted.</div>
     <div class="deal-divider"></div>
     <div class="deal-grid">
-      <div class="dg-item"><div class="dg-label">Co-Investors</div><div class="dg-val">Seedcamp</div></div>
+      <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">Obsessed with the industries that underpin sovereignty before it was fashionable. Built his own access through sheer conviction rather than institutional backing. Does not follow the playbook because there is no playbook for someone like him.</div></div>
       <div class="dg-item"><div class="dg-label">How We Sourced</div><div class="dg-val">Previous deals alongside Seedcamp gave us a tight relationship. They pinged us directly. That is what a strong co-investor network looks like in practice.</div></div>
-      <div class="dg-item"><div class="dg-label">Founder Profile</div><div class="dg-val">Completely obsessed with defence, aerospace, manufacturing and deep industry. Got into the space before it was fashionable, stayed in it when no one was paying attention, and built his own access through sheer conviction rather than institutional backing. He does not follow the playbook because there is no playbook for someone like him. The kind of founder who operates on a different frequency entirely.</div></div>
-      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">A new round has already emerged at an uplift. We got in before the market caught up.</div></div>
+      <div class="dg-item"><div class="dg-label">Competition</div><div class="dg-val">A new round has already emerged at an uplift. We got in before the market caught up. <strong>Co-investors: Seedcamp.</strong></div></div>
     </div>
   </div>
   <div class="pf"><span class="pf-logo">OTF Ventures</span><span>Confidential · Not for distribution · As of March 2026</span></div>

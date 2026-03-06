@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OTF Ventures · Legals & Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&family=Trispace:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { background: #f5f6f9; }
+  body {
+      font-family: 'Trispace', monospace;
+      background: #f5f6f9;
+      color: #0A0A0A;
+      padding: 52px 24px;
+      min-height: 100vh;
+    }
+    .wrap { max-width: 820px; margin: 0 auto; }
+
+    /* HEADER */
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #2563FF;
+      margin-bottom: 52px;
+    }
+    .ph-logo {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 13px; font-weight: 700;
+      letter-spacing: 3px; color: #2563FF;
+      text-transform: uppercase;
+    }
+    .ph-section {
+      font-family: 'Trispace', monospace;
+      font-size: 10px; color: #444;
+      letter-spacing: 1.5px; text-transform: uppercase;
+    }
+
+    h1 { font-family: 'League Spartan', sans-serif; font-size: 42px; font-weight: 900; color: #0A0A0A; line-height: 1.05; margin-bottom: 16px; }
+    h2 { font-family: 'League Spartan', sans-serif; font-size: 28px; font-weight: 900; color: #0A0A0A; line-height: 1.1; margin: 0 0 10px 0; }
+    .blue { color: #2563FF; }
+
+    .tag {
+      font-family: 'Trispace', monospace;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #2563FF; margin-bottom: 10px;
+    }
+    p.body {
+      font-family: 'Trispace', monospace;
+      font-size: 13px; color: #0A0A0A;
+      line-height: 1.8; margin-bottom: 28px;
+      max-width: 580px;
+    }
+    .divider { border-top: 1px solid #E5E7EB; margin: 52px 0; }
+    .card { background: #fff; border: 1px solid #E5E7EB; border-radius: 2px; padding: 28px; margin-bottom: 16px; }
+
+    /* TERMS TABLE */
+    .terms-table { width: 100%; border-collapse: collapse; }
+    .terms-table tr { border-bottom: 1px solid #E5E7EB; }
+    .terms-table tr:last-child { border-bottom: none; }
+    .terms-table td { padding: 13px 0; font-family: 'Trispace', monospace; font-size: 12px; line-height: 1.6; vertical-align: top; }
+    .terms-table td:first-child { font-weight: 600; color: #0A0A0A; width: 200px; padding-right: 24px; }
+    .terms-table td:last-child { color: #444; }
+
+    /* DOC BLOCK */
+    .doc-block {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      padding: 22px 24px;
+      background: #F8FAFF;
+      border: 1px solid #E5E7EB;
+      border-left: 3px solid #2563FF;
+      border-radius: 2px;
+      text-decoration: none;
+    }
+    .doc-icon {
+      width: 40px; height: 40px;
+      background: #2563FF;
+      border-radius: 2px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .doc-icon svg { width: 20px; height: 20px; fill: #fff; }
+    .doc-name { font-family: 'League Spartan', sans-serif; font-size: 15px; font-weight: 700; color: #0A0A0A; }
+    .doc-meta { font-family: 'Trispace', monospace; font-size: 10px; color: #444; margin-top: 3px; letter-spacing: 1px; text-transform: uppercase; }
+    .doc-action {
+      margin-left: auto;
+      font-family: 'Trispace', monospace;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #2563FF;
+      border: 1px solid #2563FF;
+      padding: 8px 14px;
+      border-radius: 2px;
+      white-space: nowrap;
+      text-decoration: none;
+      cursor: pointer;
+      background: transparent;
+    }
+
+    /* STRUCTURE CHART */
+    .chart-block {
+      border: 1px solid #E5E7EB;
+      border-radius: 2px;
+      overflow: hidden;
+      background: #fff;
+      margin-bottom: 16px;
+    }
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .chart-label {
+      font-family: 'Trispace', monospace;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #444;
+    }
+    .chart-download {
+      font-family: 'Trispace', monospace;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: #2563FF;
+      border: 1px solid #2563FF;
+      padding: 6px 12px;
+      border-radius: 2px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .chart-img-area {
+      padding: 28px;
+      background: #F8FAFF;
+    }
+    .chart-img-area img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* ENTITY PANELS */
+    .panel-row { display: flex; gap: 0; flex-wrap: wrap; border: 1px solid #E5E7EB; border-radius: 2px; overflow: hidden; margin-top: 16px; }
+    .panel { flex: 1; min-width: 180px; padding: 22px 20px; background: #fff; border-right: 1px solid #E5E7EB; }
+    .panel:last-child { border-right: none; }
+    .panel-role { font-family: 'Trispace', monospace; font-size: 10px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: #2563FF; margin-bottom: 6px; }
+    .panel-title { font-family: 'League Spartan', sans-serif; font-size: 13px; font-weight: 700; color: #0A0A0A; margin-bottom: 8px; }
+    .panel-body { font-family: 'Trispace', monospace; font-size: 11px; color: #444; line-height: 1.8; }
+
+    /* COVER PAGE */
+    .cover-page {
+      width: 210mm;
+      min-height: 297mm;
+      background: #f5f6f9;
+      padding: 44px 52px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      margin: 0 auto 52px auto;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    }
+    .cover-page::before {
+      content: '';
+      position: absolute;
+      top: -140px; right: -140px;
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(37,99,255,0.12);
+      pointer-events: none;
+    }
+    .cover-page::after {
+      content: '';
+      position: absolute;
+      top: -80px; right: -80px;
+      width: 280px; height: 280px;
+      border-radius: 50%;
+      border: 1px solid rgba(37,99,255,0.20);
+      pointer-events: none;
+    }
+    .cover-logo {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #2563FF; margin-bottom: 5px;
+      position: relative; z-index: 2;
+    }
+    .cover-sub-line {
+      font-family: 'Trispace', monospace;
+      font-size: 11px; color: #444; letter-spacing: 1px;
+      position: relative; z-index: 2;
+    }
+    .cover-mid { position: relative; z-index: 2; }
+    .cover-eyebrow {
+      font-family: 'Trispace', monospace;
+      font-size: 11px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #2563FF; margin-bottom: 18px;
+    }
+    .cover-title-big {
+      font-family: 'League Spartan', sans-serif;
+      font-size: 58px; font-weight: 800;
+      color: #0A0A0A; line-height: 1.04;
+      letter-spacing: -1.5px; margin-bottom: 24px;
+    }
+    .cover-title-big span { color: #2563FF; }
+    .cover-desc-text {
+      font-family: 'Trispace', monospace;
+      font-size: 13px; color: #0A0A0A;
+      line-height: 1.8; max-width: 500px;
+    }
+    .cover-desc-text p + p { margin-top: 12px; }
+    .cover-bot-row {
+      display: flex;
+      justify-content: space-between;
+      position: relative; z-index: 2;
+    }
+    .cover-bot-row span {
+      font-family: 'Trispace', monospace;
+      font-size: 10px; color: #444; letter-spacing: 1px;
+    }
+
+    /* PAGE BREAK */
+    .page-break {
+      border-top: 2px solid #E5E7EB;
+      margin-top: 52px;
+      padding-top: 52px;
+    }
+
+    /* DISCLAIMERS */
+    .disclaimer-label {
+      font-family: 'Trispace', monospace;
+      font-size: 10px; font-weight: 600;
+      letter-spacing: 3px; text-transform: uppercase;
+      color: #999; margin-bottom: 16px;
+    }
+    .disclaimer-body { font-family: 'Trispace', monospace; font-size: 10.5px; color: #888; line-height: 1.9; }
+    .disclaimer-body p { margin-bottom: 14px; }
+    .disclaimer-body p:last-child { margin-bottom: 0; }
+    .disclaimer-body strong { font-weight: 600; color: #666; }
+
+    /* FOOTER */
+    .footer { font-family: 'Trispace', monospace; font-size: 10px; color: #444; text-align: center; padding-top: 32px; margin-top: 48px; border-top: 1px solid #E5E7EB; letter-spacing: 1px; }
+
+    @media print {
+      .cover-page { page-break-after: always; min-height: auto; padding-bottom: 0; border-bottom: none; margin-bottom: 0; }
+      .page-break { page-break-before: always; border-top: none; margin-top: 0; padding-top: 52px; }
+    }
+
+    @media (max-width: 600px) {
+      h1 { font-size: 28px; }
+      h2 { font-size: 22px; }
+      .panel-row { flex-direction: column; }
+      .page-header { flex-direction: column; gap: 8px; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <!-- SECTION 04 — DISCLAIMERS -->
+  <div class="page-break">
+    <div class="disclaimer-label">04 — Disclaimers</div>
+    <div class="disclaimer-body">
+      <p>This data room and its contents are confidential and its distribution (which term shall include any form of communication) is restricted pursuant to section 21 (Restrictions on Financial Promotion) of the Financial Services and Markets Act 2000 (as amended).</p>
+      <p><strong>No offer:</strong> This presentation is being communicated solely for the purposes of ascertaining levels of interest for the Fund (which is not yet established). Accordingly, this presentation is not, and should not be construed as, an offer to accept investment in the Fund. Any investment in the Fund will be accepted solely on the basis of the Fund's final offering and constituting documents. Accordingly, this presentation will not form the basis of, and should not be relied upon in connection with, any subsequent investment in the Fund.</p>
+      <p><strong>Confidentiality:</strong> This presentation is being made and communicated to Permitted Recipients on a confidential basis, and by accepting delivery of this presentation each recipient undertakes not to reproduce or distribute this presentation in whole or in part, nor to disclose any of its contents (except to its professional advisers). The recipient and its professional advisers will keep permanently confidential information contained herein and not already in the public domain.</p>
+      <p><strong>No reliance:</strong> No reliance may be placed for any purpose whatsoever on the information contained in this presentation. Such information may be subject to updating, verification or amendment and may change materially. In preparing this presentation, reliance has been placed, without independent verification, upon the accuracy and completeness of all information available from public sources or which was provided to us or otherwise reviewed by us. No person has been authorised to give any information or make any statement concerning the Fund other than as set forth in this presentation. This presentation should not be considered as a recommendation that the Fund is a suitable investment for any recipient of this presentation.</p>
+      <p><strong>Forward-looking statements:</strong> Any forward-looking statements in this presentation are based on current expectations, estimates and projections about the industry and markets in which the Fund will operate, and OTF Advisor's beliefs and assumptions. These statements are not guarantees of future performance and involve certain risks, uncertainties and assumptions which are difficult to predict. Therefore, actual outcomes and returns may differ materially from what is expressed or forecasted in such forward-looking statements.</p>
+      <p><strong>Own investigation:</strong> Permitted Recipients should make their own investigation and evaluation of the Fund. Potential investors should inform themselves as to the legal requirements applicable to them in respect of the Fund, and the income and other tax consequences to them of holding interests in it.</p>
+      <p><strong>Recipients:</strong> This presentation is not an offer to sell or a solicitation of an offer to buy an interest in the Fund, nor shall any interest be offered or sold, to any person in any jurisdiction in which such offer, solicitation, purchase or sale would be unlawful under the securities laws of such jurisdiction.</p>
+      <p>We are currently seconded from OTF Advisors Limited to AQ1443 Ltd (A company registered in England and Wales with registration number 13994528) (trading as 'Thema').</p>
+    </div>
+  </div>
+  <div class="footer">OTF Ventures · Confidential · Not for distribution</div>
+</div>
+</body>
+</html>

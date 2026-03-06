@@ -6,70 +6,78 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Mail, Check, Plus, Trash2, UserPlus } from 'lucide-react';
+import { Mail, Plus, Trash2, UserPlus, ShieldBan, ShieldCheck } from 'lucide-react';
 import { format } from 'date-fns';
 
-interface Invitation {
+type AppRole = 'admin' | 'viewer';
+type UserStatus = 'pending' | 'active' | 'blocked';
+type Tab = 'viewers' | 'admins';
+
+interface ManagedUser {
   id: string;
+  user_id: string | null;
   email: string;
-  accepted: boolean;
-  role: 'admin' | 'user';
+  full_name: string | null;
+  role: AppRole;
+  status: UserStatus;
   created_at: string;
 }
 
+const STATUS_LABEL: Record<UserStatus, string> = {
+  pending: 'Pending',
+  active: 'Active',
+  blocked: 'Blocked',
+};
+
+const STATUS_COLOR: Record<UserStatus, string> = {
+  pending: 'text-yellow-600',
+  active: 'text-primary',
+  blocked: 'text-destructive',
+};
+
 export default function AdminInvitations() {
   const { user } = useAuth();
-  const [invitations, setInvitations] = useState<Invitation[]>([]);
+  const [users, setUsers] = useState<ManagedUser[]>([]);
+  const [activeTab, setActiveTab] = useState<Tab>('viewers');
   const [newEmail, setNewEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState<'admin' | 'user'>('user');
+  const [inviteRole, setInviteRole] = useState<AppRole>('viewer');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [actioningId, setActioningId] = useState<string | null>(null);
   const [actionError, setActionError] = useState('');
   const [manualInviteLink, setManualInviteLink] = useState('');
 
   const getFunctionErrorMessage = async (error: unknown) => {
     if (typeof error === 'object' && error !== null) {
       const maybeContext = (error as { context?: unknown }).context;
-      if (typeof maybeContext === 'string' && maybeContext.trim()) {
-        return maybeContext;
-      }
+      if (typeof maybeContext === 'string' && maybeContext.trim()) return maybeContext;
       if (maybeContext && typeof maybeContext === 'object' && 'json' in maybeContext) {
         try {
           const payload = await (maybeContext as { json: () => Promise<{ error?: string; message?: string }> }).json();
           if (payload?.error) return payload.error;
           if (payload?.message) return payload.message;
-        } catch {
-          // ignore parse errors, fallback below
-        }
+        } catch { /* ignore */ }
       }
-
       const maybeMessage = (error as { message?: unknown }).message;
-      if (typeof maybeMessage === 'string' && maybeMessage.trim()) {
-        return maybeMessage;
-      }
+      if (typeof maybeMessage === 'string' && maybeMessage.trim()) return maybeMessage;
     }
     return 'Request failed.';
   };
 
-  useEffect(() => {
-    fetchInvitations();
-  }, []);
+  useEffect(() => { fetchUsers(); }, []);
 
-  const fetchInvitations = async () => {
+  const fetchUsers = async () => {
     try {
       const { data, error } = await supabase
-        .from('invitations')
-        .select('*')
+        .from('users')
+        .select('id, user_id, email, full_name, role, status, created_at')
         .order('created_at', { ascending: false });
-
       if (error) {
         setActionError(error.message);
-        toast.error(`Failed to load invitations: ${error.message}`);
+        toast.error(`Failed to load users: ${error.message}`);
         return;
       }
-
-      setInvitations(data ?? []);
+      setUsers((data ?? []) as ManagedUser[]);
     } finally {
       setLoading(false);
     }
@@ -94,27 +102,15 @@ export default function AdminInvitations() {
     }
 
     const { data, error } = await supabase.functions.invoke('send-invitation', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: {
-        email: normalizedEmail,
-        role: inviteRole,
-        redirectTo: `${window.location.origin}/accept-invite`,
-      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: { email: normalizedEmail, role: inviteRole, redirectTo: `${window.location.origin}/accept-invite` },
     });
 
     if (error) {
       const message = await getFunctionErrorMessage(error);
       const normalizedMessage = message.toLowerCase();
-      if (error.code === '23505') {
-        toast.error('This email has already been invited.');
-      } else if (error.code === '42501') {
-        const message = 'You do not have permission to send invites. Ensure your user has the admin role.';
-        setActionError(message);
-        toast.error(message);
-      } else if (normalizedMessage.includes('error sending invite email')) {
-        const guidance = 'Supabase could not send the invite email. Check Auth > Email provider and make sure your app URL (including /accept-invite) is allowed in Auth URL settings.';
+      if (normalizedMessage.includes('error sending invite email')) {
+        const guidance = 'Supabase could not send the invite email. Check Auth > Email provider and make sure your app URL is allowed in Auth URL settings.';
         setActionError(guidance);
         toast.error(guidance);
       } else {
@@ -122,19 +118,22 @@ export default function AdminInvitations() {
         toast.error(message);
       }
     } else if (!data?.invitation) {
-      const message = 'Invite request completed but no invitation was returned.';
+      const message = 'Invite request completed but no record was returned.';
       setActionError(message);
       toast.error(message);
     } else {
-      setInvitations((prev) => [{ ...data.invitation, role: data.invitation.role ?? inviteRole }, ...prev.filter((inv) => inv.email !== data.invitation.email)]);
+      const newRecord = { ...data.invitation, role: data.invitation.role ?? inviteRole } as ManagedUser;
+      setUsers((prev) => [newRecord, ...prev.filter((u) => u.email !== newRecord.email)]);
       if (data.emailSent === false && typeof data.inviteLink === 'string') {
         setManualInviteLink(data.inviteLink);
         toast.warning('Invite created, but email delivery failed. Share the manual invite link below.');
       } else {
-        toast.success(`Invitation email sent to ${normalizedEmail}`);
+        toast.success(`Invitation sent to ${normalizedEmail}`);
       }
       setNewEmail('');
-      setInviteRole('user');
+      setInviteRole('viewer');
+      // Switch to the tab matching the invited role
+      setActiveTab(inviteRole === 'admin' ? 'admins' : 'viewers');
     }
     setSubmitting(false);
   };
@@ -149,10 +148,37 @@ export default function AdminInvitations() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!user) return;
-    setDeletingId(id);
+  const handleBlock = async (u: ManagedUser) => {
+    setActioningId(u.id);
     setActionError('');
+    const newStatus: UserStatus = u.status === 'blocked' ? 'active' : 'blocked';
+    const { error } = await supabase.from('users').update({ status: newStatus }).eq('id', u.id);
+    if (error) {
+      setActionError(error.message);
+      toast.error(error.message);
+    } else {
+      setUsers((prev) => prev.map((x) => x.id === u.id ? { ...x, status: newStatus } : x));
+      toast.success(newStatus === 'blocked' ? `${u.email} blocked.` : `${u.email} unblocked.`);
+    }
+    setActioningId(null);
+  };
+
+  const handleDelete = async (u: ManagedUser) => {
+    setActioningId(u.id);
+    setActionError('');
+
+    if (!u.user_id) {
+      const { error } = await supabase.from('users').delete().eq('id', u.id);
+      if (error) {
+        setActionError(error.message);
+        toast.error(error.message);
+      } else {
+        setUsers((prev) => prev.filter((x) => x.id !== u.id));
+        toast.success('Invitation removed.');
+      }
+      setActioningId(null);
+      return;
+    }
 
     const { data: sessionData } = await supabase.auth.getSession();
     const accessToken = sessionData.session?.access_token;
@@ -160,30 +186,24 @@ export default function AdminInvitations() {
       const message = 'Your session expired. Please sign in again.';
       setActionError(message);
       toast.error(message);
-      setDeletingId(null);
+      setActioningId(null);
       return;
     }
 
     const { error } = await supabase.functions.invoke('delete-invitation-user', {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: {
-        invitationId: id,
-      },
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: { userId: u.id },
     });
 
     if (error) {
       const message = await getFunctionErrorMessage(error);
       setActionError(message);
       toast.error(message);
-      setDeletingId(null);
-      return;
+    } else {
+      setUsers((prev) => prev.filter((x) => x.id !== u.id));
+      toast.success('User removed.');
     }
-
-    toast.success('Invitation and user removed');
-    await fetchInvitations();
-    setDeletingId(null);
+    setActioningId(null);
   };
 
   if (loading) {
@@ -194,6 +214,15 @@ export default function AdminInvitations() {
     );
   }
 
+  const viewers = users.filter((u) => u.role === 'viewer');
+  const admins  = users.filter((u) => u.role === 'admin');
+  const tabUsers = activeTab === 'viewers' ? viewers : admins;
+
+  const tabs: { key: Tab; label: string; count: number }[] = [
+    { key: 'viewers', label: 'Viewers', count: viewers.length },
+    { key: 'admins',  label: 'Admins',  count: admins.length },
+  ];
+
   return (
     <div className="min-h-screen relative overflow-hidden">
       <div className="decorative-circle-lg" />
@@ -202,14 +231,14 @@ export default function AdminInvitations() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 md:px-8 py-10 sm:py-12 relative z-10">
         <div className="page-header">
           <div className="font-display text-xs font-bold tracking-[3px] text-primary uppercase">OTF Ventures</div>
-          <div className="text-[10px] text-muted-foreground tracking-[1.5px] uppercase font-body">Invitations</div>
+          <div className="text-[10px] text-muted-foreground tracking-[1.5px] uppercase font-body">Users</div>
         </div>
 
         <h1 className="font-display text-2xl sm:text-3xl font-extrabold text-foreground tracking-tight mb-2">
-          Manage Invitations
+          Manage Users
         </h1>
         <p className="text-sm text-muted-foreground font-body mb-8">
-          Invite users by email. Only invited users can create accounts and access the data room.
+          Invite users by email. Block or remove access at any time.
         </p>
 
         {/* Invite form */}
@@ -236,12 +265,12 @@ export default function AdminInvitations() {
             </div>
             <div className="w-full sm:w-40">
               <Label htmlFor="invite-role" className="sr-only">Role</Label>
-              <Select value={inviteRole} onValueChange={(value: 'admin' | 'user') => setInviteRole(value)}>
+              <Select value={inviteRole} onValueChange={(value: AppRole) => setInviteRole(value)}>
                 <SelectTrigger id="invite-role" className="font-body">
                   <SelectValue placeholder="Role" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="user">User</SelectItem>
+                  <SelectItem value="viewer">Viewer</SelectItem>
                   <SelectItem value="admin">Admin</SelectItem>
                 </SelectContent>
               </Select>
@@ -260,58 +289,109 @@ export default function AdminInvitations() {
                 Manual Invite Link
               </Label>
               <div className="flex flex-col sm:flex-row gap-2">
-                <Input
-                  id="manual-invite-link"
-                  value={manualInviteLink}
-                  readOnly
-                  className="font-body"
-                />
-                <Button type="button" variant="secondary" onClick={handleCopyManualInviteLink}>
-                  Copy Link
-                </Button>
+                <Input id="manual-invite-link" value={manualInviteLink} readOnly className="font-body" />
+                <Button type="button" variant="secondary" onClick={handleCopyManualInviteLink}>Copy Link</Button>
               </div>
             </div>
           )}
         </form>
 
-        {/* Invitations list */}
-        <div className="mb-4">
-          <h2 className="font-display text-xl font-extrabold text-foreground tracking-tight mb-1">Invited Users</h2>
-          <div className="section-rule mb-5" />
+        {/* Tabs */}
+        <div className="flex gap-0 border-b border-border mb-6">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-5 py-2.5 text-sm font-display font-bold tracking-wide transition-colors border-b-2 -mb-px ${
+                activeTab === tab.key
+                  ? 'border-primary text-primary'
+                  : 'border-transparent text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              {tab.label}
+              <span className={`ml-2 text-xs font-body ${activeTab === tab.key ? 'text-primary' : 'text-muted-foreground'}`}>
+                {tab.count}
+              </span>
+            </button>
+          ))}
         </div>
 
-        <div className="space-y-2">
-          {invitations.map((inv, i) => (
-            <div key={inv.id} className="glass-card px-4 sm:px-5 py-4 flex items-center justify-between gap-3 animate-fade-in" style={{ animationDelay: `${i * 50}ms` }}>
-              <div className="flex items-center gap-3 min-w-0">
-                <div className={`p-2 rounded-lg ${inv.accepted ? 'bg-primary/10' : 'bg-accent'}`}>
-                  {inv.accepted ? (
-                    <Check className="h-4 w-4 text-primary" />
-                  ) : (
-                    <Mail className="h-4 w-4 text-primary" />
+        {/* Column headers */}
+        {tabUsers.length > 0 && (
+          <div className="grid grid-cols-[1fr_80px_80px_56px] gap-x-4 px-4 sm:px-5 mb-1">
+            <div className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-wider">User</div>
+            <div className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-wider">Status</div>
+            <div className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-wider">Invited</div>
+            <div />
+          </div>
+        )}
+
+        {/* User rows */}
+        <div className="space-y-1.5">
+          {tabUsers.map((u, i) => {
+            const isSelf = u.user_id === user?.id;
+            const isActioning = actioningId === u.id;
+            return (
+              <div
+                key={u.id}
+                className="glass-card px-4 sm:px-5 py-3.5 grid grid-cols-[1fr_80px_80px_56px] gap-x-4 items-center animate-fade-in"
+                style={{ animationDelay: `${i * 40}ms` }}
+              >
+                {/* Name / email */}
+                <div className="min-w-0">
+                  <div className="text-sm font-body font-semibold text-foreground truncate">
+                    {u.full_name || u.email}
+                    {isSelf && <span className="ml-1.5 text-[10px] font-normal text-muted-foreground">(you)</span>}
+                  </div>
+                  {u.full_name && (
+                    <div className="text-[11px] text-muted-foreground font-body truncate">{u.email}</div>
                   )}
                 </div>
-                <div className="min-w-0">
-                  <div className="text-sm font-body font-semibold text-foreground truncate">{inv.email}</div>
-                  <div className="text-[10px] text-muted-foreground font-body">
-                    Invited {format(new Date(inv.created_at), 'MMM d, yyyy')}
-                    {` · ${inv.role === 'admin' ? 'Admin' : 'User'}`}
-                    {inv.accepted && ' · Accepted'}
-                  </div>
+
+                {/* Status */}
+                <div className={`text-xs font-body font-medium ${STATUS_COLOR[u.status]}`}>
+                  {STATUS_LABEL[u.status]}
+                </div>
+
+                {/* Invited date */}
+                <div className="text-xs font-body text-muted-foreground whitespace-nowrap">
+                  {format(new Date(u.created_at), 'MMM d, yyyy')}
+                </div>
+
+                {/* Actions */}
+                <div className="flex items-center justify-end gap-0.5">
+                  {!isSelf && u.status !== 'pending' && (
+                    <button
+                      onClick={() => handleBlock(u)}
+                      disabled={isActioning}
+                      title={u.status === 'blocked' ? 'Unblock user' : 'Block user'}
+                      className={`p-1.5 rounded-md transition-colors disabled:opacity-40 ${
+                        u.status === 'blocked'
+                          ? 'text-primary hover:bg-primary/10'
+                          : 'text-muted-foreground hover:bg-destructive/10 hover:text-destructive'
+                      }`}
+                    >
+                      {u.status === 'blocked' ? <ShieldCheck className="h-3.5 w-3.5" /> : <ShieldBan className="h-3.5 w-3.5" />}
+                    </button>
+                  )}
+                  {!isSelf && (
+                    <button
+                      onClick={() => handleDelete(u)}
+                      disabled={isActioning}
+                      title="Remove user"
+                      className="p-1.5 rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors disabled:opacity-40"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                 </div>
               </div>
-              <button
-                onClick={() => handleDelete(inv.id)}
-                disabled={deletingId === inv.id}
-                className="p-2 rounded-lg text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-          {invitations.length === 0 && (
+            );
+          })}
+
+          {tabUsers.length === 0 && (
             <div className="glass-card px-5 py-10 text-center text-muted-foreground font-body text-sm">
-              No invitations yet. Start by inviting someone above.
+              No {activeTab === 'viewers' ? 'viewers' : 'admins'} yet.
             </div>
           )}
         </div>

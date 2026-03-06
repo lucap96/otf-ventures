@@ -52,14 +52,14 @@ const rawNavItems: MenuItem[] = [
     label: 'Deck',
     icon: BookOpen,
     enabled: true,
-    children: [{ label: 'Long Deck', linkType: 'external', url: 'https://docsend.com/view/xsfzbimm3qdvtcdv', enabled: true }],
+    children: [{ label: 'Long Deck', linkType: 'external', url: 'https://docsend.com/v/x8np8/otfmar26', enabled: true }],
   },
   {
     label: 'Track Record',
     icon: BarChart3,
     enabled: true,
     children: [
-      { label: 'Deals In Numbers', linkType: 'external', url: 'https://docs.google.com/spreadsheets/d/1c0zREYWLCO_rwHuahqN84zLJwzEMQY2xxoErGzSSuH0/edit?gid=0#gid=0', enabled: true },
+      { label: 'Deals In Numbers', linkType: 'external', url: 'https://docs.google.com/spreadsheets/d/1c0zREYWLCO_rwHuahqN84zLJwzEMQY2xxoErGzSSuH0/edit?usp=sharing', enabled: true },
       { label: 'Deals In Words', linkType: 'native', url: '/track-record/in-words', enabled: true },
     ],
   },
@@ -78,7 +78,7 @@ const rawNavItems: MenuItem[] = [
     icon: Briefcase,
     enabled: true,
     children: [
-      { label: 'Fund Model', linkType: 'external', url: 'https://docs.google.com/spreadsheets/d/1FWXf2pkKaMxaKej9S3d0QoLHXt4bwvk6/edit?rtpof=true&sd=true&gid=1596136530#gid=1596136530', enabled: true },
+      { label: 'Fund Model', linkType: 'external', url: 'https://docs.google.com/spreadsheets/d/1nx8rpBGn2rg7S7je5drT1xiebyEqgp6-/edit?gid=1260340685#gid=1260340685', enabled: true },
       { label: 'Model Walkthrough', linkType: 'native', url: '/fund-model/walk-through', enabled: true },
       { label: 'Exit Strategy & Liquidity', linkType: 'native', url: '/fund-model/exit-strategy-liquidity', enabled: true },
     ],
@@ -93,6 +93,7 @@ const rawNavItems: MenuItem[] = [
       { label: 'Fund Terms', linkType: 'native', url: '/legals/fund-terms', enabled: true },
       { label: 'Subscription Agreement', linkType: 'native', url: '/legals/subscription-agreement', enabled: true },
       { label: 'Fund Structure & Setup', linkType: 'native', url: '/legals/fund-structure-setup', enabled: true },
+      { label: 'Disclaimer', linkType: 'native', url: '/legals/disclaimer', enabled: true },
     ],
   },
 ];
@@ -118,7 +119,7 @@ const adminItems = [
 
 export default function AppLayout() {
   const { user, isAdmin, signOut } = useAuth();
-  const { trackPageView } = useAnalytics();
+  const { trackPageView, trackExternalLink } = useAnalytics();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState<Record<string, boolean>>(() =>
@@ -145,14 +146,18 @@ export default function AppLayout() {
       return;
     }
 
+    // Use auth metadata immediately (set by updateUser during registration)
+    const metaName = ((user.user_metadata?.full_name ?? '') as string).trim();
+    if (metaName) setFullName(metaName);
+
     void (async () => {
       const { data } = await supabase
-        .from('profiles')
+        .from('users')
         .select('full_name')
         .eq('user_id', user.id)
         .maybeSingle();
       if (!active) return;
-      setFullName(data?.full_name?.trim() ?? '');
+      setFullName(data?.full_name?.trim() || metaName);
     })();
 
     return () => {
@@ -204,20 +209,22 @@ export default function AppLayout() {
 
   useEffect(() => {
     const pageMap: Record<string, string> = {
-      '/': 'dataroom_cover',
-      '/operators': 'operators',
-      '/operators/our-operators': 'operators',
-      '/operators/how-we-work-together': 'operators',
-      '/operators/operator-incentives': 'operators',
-      '/fund-model/walk-through': 'fund_model_walk_through',
-      '/fund-model/exit-strategy-liquidity': 'fund_model_exit_strategy_liquidity',
-      '/sourcing': 'sourcing',
-      '/committed-deals-2026': 'committed_deals_2026',
-      '/legals/fund-terms': 'legal_fund_terms',
-      '/legals/subscription-agreement': 'legal_subscription_agreement',
-      '/legals/fund-structure-setup': 'legal_fund_structure_setup',
-      '/admin/analytics': 'admin_analytics',
-      '/admin/invitations': 'admin_invitations',
+      '/': 'Home',
+      '/operators': 'Our Operators',
+      '/operators/our-operators': 'Our Operators',
+      '/operators/how-we-work-together': 'How We Work Together',
+      '/operators/operator-incentives': 'Operator Incentives',
+      '/fund-model/walk-through': 'Model Walkthrough',
+      '/fund-model/exit-strategy-liquidity': 'Exit Strategy & Liquidity',
+      '/sourcing': 'Sourcing',
+      '/track-record/in-words': 'Deals In Words',
+      '/committed-deals-2026': 'Committed Deals 2026',
+      '/legals/fund-terms': 'Fund Terms',
+      '/legals/subscription-agreement': 'Subscription Agreement',
+      '/legals/fund-structure-setup': 'Fund Structure & Setup',
+      '/legals/disclaimer': 'Disclaimer',
+      '/admin/analytics': 'Admin — Analytics',
+      '/admin/invitations': 'Admin — Invitations',
     };
     const page = pageMap[location.pathname];
     if (!page) return;
@@ -381,6 +388,7 @@ export default function AppLayout() {
                       rel="noopener noreferrer"
                       onClick={() => {
                         if (isMobile) setMobileMenuOpen(false);
+                        void trackExternalLink(item.label, item.url ?? '');
                       }}
                       className={cn(
                         "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-body transition-colors text-muted-foreground hover:bg-accent/50 hover:text-foreground",
@@ -426,6 +434,7 @@ export default function AppLayout() {
                             rel="noopener noreferrer"
                             onClick={() => {
                               if (isMobile) setMobileMenuOpen(false);
+                              void trackExternalLink(child.label, child.url ?? '');
                             }}
                             className="block rounded-md px-3 py-1.5 text-sm font-body transition-colors text-muted-foreground hover:bg-accent/50 hover:text-foreground"
                           >

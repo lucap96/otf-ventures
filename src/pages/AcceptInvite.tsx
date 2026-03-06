@@ -17,7 +17,7 @@ export default function AcceptInvite() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
-  const [assignedRole, setAssignedRole] = useState<'admin' | 'user' | null>(null);
+  const [assignedRole, setAssignedRole] = useState<'admin' | 'viewer' | null>(null);
 
   useEffect(() => {
     const bootstrapInvite = async () => {
@@ -58,7 +58,7 @@ export default function AcceptInvite() {
         }
 
         if (!invited) {
-          setError('This account is not invited.');
+          setError('This email address has not been invited. Contact an administrator to request access.');
           return;
         }
 
@@ -97,8 +97,7 @@ export default function AcceptInvite() {
       return;
     }
 
-    const normalizedEmail = user.email.toLowerCase();
-
+    // Update auth user password + metadata
     const { error: updateUserError } = await supabase.auth.updateUser({
       password,
       data: { full_name: fullName.trim() },
@@ -109,40 +108,17 @@ export default function AcceptInvite() {
       return;
     }
 
-    const [profileResult, invitationResult] = await Promise.all([
-      supabase
-        .from('profiles')
-        .upsert(
-          {
-            user_id: user.id,
-            email: normalizedEmail,
-            full_name: fullName.trim(),
-          },
-          { onConflict: 'user_id' },
-        ),
-      supabase.from('invitations').update({ accepted: true }).eq('email', normalizedEmail),
-    ]);
-
-    if (profileResult.error) {
-      setError(profileResult.error.message);
-      setSubmitting(false);
-      return;
-    }
-
-    if (invitationResult.error) {
-      setError(invitationResult.error.message);
-      setSubmitting(false);
-      return;
-    }
-
-    const { data: roleData, error: roleError } = await supabase.rpc('claim_invitation_role');
+    // Atomically activate the user record: sets user_id, status='active', full_name
+    const { data: roleData, error: roleError } = await supabase.rpc('claim_invitation_role', {
+      p_full_name: fullName.trim(),
+    });
     if (roleError) {
       setError(roleError.message);
       setSubmitting(false);
       return;
     }
 
-    const role = (roleData === 'admin' ? 'admin' : 'user') as 'admin' | 'user';
+    const role = (roleData === 'admin' ? 'admin' : 'viewer') as 'admin' | 'viewer';
     setAssignedRole(role);
     await supabase.auth.refreshSession();
     toast.success('Account setup complete.');
@@ -161,8 +137,8 @@ export default function AcceptInvite() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background px-6">
         <div className="glass-card p-8 max-w-md w-full">
-          <h1 className="font-display text-xl font-bold mb-3">Invitation Invalid</h1>
-          <p className="text-sm text-muted-foreground font-body">{error || 'This invite link is invalid.'}</p>
+          <h1 className="font-display text-xl font-bold mb-3">Access Denied</h1>
+          <p className="text-sm text-muted-foreground font-body">{error || 'This invite link is invalid or has expired.'}</p>
           <Button className="mt-6 w-full font-display uppercase tracking-wide" onClick={() => navigate('/login')}>
             Back to Login
           </Button>

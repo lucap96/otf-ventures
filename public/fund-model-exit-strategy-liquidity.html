@@ -7,9 +7,10 @@
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&family=Trispace:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+    html { background: #f5f6f9; }
+  body {
       font-family: 'Trispace', monospace;
-      background: #FAFAFA;
+      background: #f5f6f9;
       color: #0A0A0A;
       padding: 52px 24px;
       min-height: 100vh;
@@ -22,14 +23,14 @@
     .page-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       padding-bottom: 20px;
       border-bottom: 2px solid #2563FF;
       margin-bottom: 52px;
     }
     .ph-logo {
       font-family: 'League Spartan', sans-serif;
-      font-size: 13px;
+      font-size: 11px;
       font-weight: 700;
       letter-spacing: 3px;
       color: #2563FF;
@@ -70,7 +71,7 @@
     /* STAT BOXES */
     .stat-row { display: flex; gap: 16px; margin-top: 32px; flex-wrap: wrap; }
     .stat-box { flex: 1; min-width: 180px; padding: 20px; border-left: 3px solid #2563FF; background: #F8FAFF; }
-    .stat-value { font-family: 'League Spartan', sans-serif; font-size: 30px; font-weight: 900; color: #2563FF; line-height: 1; }
+    .stat-value { font-family: 'League Spartan', sans-serif; font-size: 22px; font-weight: 900; color: #2563FF; line-height: 1; }
     .stat-label { font-family: 'Trispace', monospace; font-size: 12px; font-weight: 600; color: #0A0A0A; margin-top: 6px; }
     .stat-sub { font-family: 'Trispace', monospace; font-size: 10px; color: #444; margin-top: 4px; }
 
@@ -107,6 +108,9 @@
     .final-quote-inner { border-left: 4px solid #2563FF; padding-left: 20px; }
     .final-quote p { font-family: 'League Spartan', sans-serif; font-size: 18px; font-weight: 700; color: #0A0A0A; line-height: 1.5; }
 
+    /* PAGE HEADER ALIAS */
+    .ph { display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 2px solid #2563FF; margin-bottom: 52px; }
+
     /* FOOTER */
     .footer { font-family: 'Trispace', monospace; font-size: 10px; color: #444; text-align: center; padding-top: 32px; margin-top: 48px; border-top: 1px solid #E5E7EB; letter-spacing: 1px; }
 
@@ -133,7 +137,7 @@
     <div class="tag">Exit Strategy</div>
     <h1>Realising returns is an<br><span class="blue">active, judgment-driven process.</span></h1>
     <p class="body" style="margin-bottom:0">
-      Entry and exits are the determinants of how you make money — both deserve equal attention, although most don't give them equal thought. Venture-backed IPOs and M&A exits in Europe are rare. We do not want to rely solely on those to achieve liquidity. As investors who have observed growth markets first-hand, we have seen how they periodically detach from fundamentals. Rather than being subject to that irrationality, we position to benefit from it — converting momentum into liquidity at moments when the market is most willing to pay.
+      Venture-backed IPOs and M&A exits in Europe are rare. We do not want to rely solely on those to achieve liquidity. As investors who have observed growth markets first-hand, we have seen how they periodically detach from fundamentals. Rather than being subject to that irrationality, we position to benefit from it — converting momentum into liquidity at moments when the market is most willing to pay.
     </p>
   </div>
 
@@ -244,12 +248,12 @@
 
     <div class="stat-row">
       <div class="stat-box">
-        <div class="stat-value" style="font-size:20px">No fund costs</div>
+        <div class="stat-value">No fund costs</div>
         <div class="stat-label">LP co-invest SPVs carry no fund fees</div>
         <div class="stat-sub">Optional, sized to preference</div>
       </div>
       <div class="stat-box">
-        <div class="stat-value">DPI first</div>
+        <div class="stat-value">DPI First</div>
         <div class="stat-label">Fund locks in real returns</div>
         <div class="stat-sub">LP chooses whether to stay in</div>
       </div>
@@ -270,7 +274,7 @@
     </div>
   </div>
 
-  <div class="footer">OTF Ventures · Confidential · Not for distribution · Full portfolio as of December 15, 2025</div>
+  <div class="footer">OTF Ventures · Confidential · Not for distribution</div>
 
 </div>
 </body>

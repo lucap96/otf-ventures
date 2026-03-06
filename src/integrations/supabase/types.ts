@@ -71,72 +71,36 @@ export type Database = {
         }
         Relationships: []
       }
-      invitations: {
+      users: {
         Row: {
-          accepted: boolean
-          created_at: string
-          email: string
           id: string
-          invited_by: string | null
-          role: Database["public"]["Enums"]["app_role"]
-        }
-        Insert: {
-          accepted?: boolean
-          created_at?: string
-          email: string
-          id?: string
-          invited_by?: string | null
-          role?: Database["public"]["Enums"]["app_role"]
-        }
-        Update: {
-          accepted?: boolean
-          created_at?: string
-          email?: string
-          id?: string
-          invited_by?: string | null
-          role?: Database["public"]["Enums"]["app_role"]
-        }
-        Relationships: []
-      }
-      profiles: {
-        Row: {
-          created_at: string
+          user_id: string | null
           email: string
           full_name: string | null
-          id: string
-          user_id: string
+          role: Database["public"]["Enums"]["app_role"]
+          status: Database["public"]["Enums"]["user_status"]
+          invited_by: string | null
+          created_at: string
         }
         Insert: {
-          created_at?: string
+          id?: string
+          user_id?: string | null
           email: string
           full_name?: string | null
-          id?: string
-          user_id: string
+          role?: Database["public"]["Enums"]["app_role"]
+          status?: Database["public"]["Enums"]["user_status"]
+          invited_by?: string | null
+          created_at?: string
         }
         Update: {
-          created_at?: string
+          id?: string
+          user_id?: string | null
           email?: string
           full_name?: string | null
-          id?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          id?: string
           role?: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
+          status?: Database["public"]["Enums"]["user_status"]
+          invited_by?: string | null
+          created_at?: string
         }
         Relationships: []
       }
@@ -146,7 +110,7 @@ export type Database = {
     }
     Functions: {
       claim_invitation_role: {
-        Args: Record<PropertyKey, never>
+        Args: { p_full_name?: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
       has_role: {
@@ -156,10 +120,19 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       is_invited: { Args: { check_email: string }; Returns: boolean }
+      get_invite_status: {
+        Args: { check_email: string }
+        Returns: Database["public"]["Enums"]["user_status"] | null
+      }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "viewer"
+      user_status: "pending" | "active" | "blocked"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -192,13 +165,13 @@ export type Tables<
     : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
         DefaultSchema["Views"])
-    ? (DefaultSchema["Tables"] &
-        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-        Row: infer R
-      }
-      ? R
-      : never
+  ? (DefaultSchema["Tables"] &
+      DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+      Row: infer R
+    }
+    ? R
     : never
+  : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
@@ -218,12 +191,12 @@ export type TablesInsert<
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Insert: infer I
-      }
-      ? I
-      : never
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+      Insert: infer I
+    }
+    ? I
     : never
+  : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
@@ -243,12 +216,12 @@ export type TablesUpdate<
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-        Update: infer U
-      }
-      ? U
-      : never
+  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+      Update: infer U
+    }
+    ? U
     : never
+  : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
@@ -264,8 +237,8 @@ export type Enums<
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-    : never
+  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+  : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
@@ -281,13 +254,14 @@ export type CompositeTypes<
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-    : never
+  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+  : never
 
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "viewer"],
+      user_status: ["pending", "active", "blocked"],
     },
   },
 } as const

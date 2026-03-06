@@ -10,7 +10,11 @@ export default function Login() {
   const { user, loading, signIn, requestPasswordReset } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [error, setError] = useState(() => {
+    const reason = window.sessionStorage.getItem('auth:signout_reason') ?? '';
+    if (reason) window.sessionStorage.removeItem('auth:signout_reason');
+    return reason;
+  });
   const [submitting, setSubmitting] = useState(false);
   const [resetSubmitting, setResetSubmitting] = useState(false);
   const [resetMessage, setResetMessage] = useState('');
@@ -23,7 +27,8 @@ export default function Login() {
     );
   }
 
-  if (user) return <Navigate to="/" replace />;
+  // Don't navigate while signIn is in-flight — blocked users are set briefly before signOut fires.
+  if (user && !submitting) return <Navigate to="/" replace />;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

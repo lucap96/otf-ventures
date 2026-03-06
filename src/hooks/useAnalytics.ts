@@ -6,7 +6,7 @@ const pageViewDedupe = new Map<string, number>();
 const DEDUPE_WINDOW_MS = 10000;
 
 export function useAnalytics() {
-  const { user, isAdmin } = useAuth();
+  const { user, isAdmin, roleLoading } = useAuth();
 
   const shouldTrackPageView = useCallback((page: string) => {
     if (typeof window === 'undefined') return true;
@@ -24,23 +24,32 @@ export function useAnalytics() {
   }, [user?.id]);
 
   const trackPageView = useCallback(async (page: string) => {
-    if (!user || isAdmin || !shouldTrackPageView(page)) return;
+    if (!user || isAdmin || roleLoading || !shouldTrackPageView(page)) return;
     await supabase.from('analytics_events').insert({
       user_id: user.id,
       event_type: 'page_view',
       metadata: { page, timestamp: new Date().toISOString() },
     });
-  }, [isAdmin, shouldTrackPageView, user]);
+  }, [isAdmin, roleLoading, shouldTrackPageView, user]);
 
   const trackDocumentView = useCallback(async (documentId: string, documentTitle: string) => {
-    if (!user || isAdmin) return;
+    if (!user || isAdmin || roleLoading) return;
     await supabase.from('analytics_events').insert({
       user_id: user.id,
       document_id: documentId,
       event_type: 'document_view',
       metadata: { document_id: documentId, document_title: documentTitle, timestamp: new Date().toISOString() },
     });
-  }, [isAdmin, user]);
+  }, [isAdmin, roleLoading, user]);
 
-  return { trackPageView, trackDocumentView };
+  const trackExternalLink = useCallback(async (label: string, url: string) => {
+    if (!user || isAdmin || roleLoading) return;
+    await supabase.from('analytics_events').insert({
+      user_id: user.id,
+      event_type: 'external_link',
+      metadata: { label, url, timestamp: new Date().toISOString() },
+    });
+  }, [isAdmin, roleLoading, user]);
+
+  return { trackPageView, trackDocumentView, trackExternalLink };
 }

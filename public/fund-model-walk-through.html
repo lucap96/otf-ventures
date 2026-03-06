@@ -8,9 +8,10 @@
   <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600;700;800;900&family=Trispace:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
+    html { background: #f5f6f9; }
+  body {
       font-family: 'Trispace', monospace;
-      background: #FAFAFA;
+      background: #f5f6f9;
       color: #0A0A0A;
       padding: 52px 24px;
       min-height: 100vh;
@@ -120,7 +121,7 @@
 
     /* Two col */
     .two-col { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 16px; }
-    .two-col-main { flex: 2; min-width: 260px; }
+    .two-col-main { flex: 1.3; min-width: 220px; }
     .two-col-side { flex: 1; min-width: 200px; display: flex; flex-direction: column; gap: 12px; }
 
     /* 2% big stat */
@@ -169,7 +170,7 @@
         <div class="trispace" style="font-size:11px;color:#0A0A0A;margin-top:4px">Each dot is one company.</div>
       </div>
       <div class="trispace" style="font-size:10px;color:#0A0A0A;text-align:right;line-height:1.6">
-        Source: Horsley Bridge<br>1985-2014 US VC investments
+        Source: Horsley Bridge
       </div>
     </div>
 
@@ -180,17 +181,17 @@
       <div class="stat-box">
         <div class="stat-value">5%</div>
         <div class="stat-label">of deals generate 60% of all returns</div>
-        <div class="stat-source">Horsley Bridge, 1985-2014</div>
+        <div class="stat-source">Horsley Bridge</div>
       </div>
       <div class="stat-box">
         <div class="stat-value">1.1%</div>
         <div class="stat-label">of companies returned the entire fund</div>
-        <div class="stat-source">VenCap, 11,350 startups 1986-2018</div>
+        <div class="stat-source">VenCap, 11,350 startups</div>
       </div>
       <div class="stat-box">
         <div class="stat-value">90%</div>
         <div class="stat-label">of 3x+ funds had at least one fund returner</div>
-        <div class="stat-source">VenCap, 259 funds analysed</div>
+        <div class="stat-source">VenCap, 259 funds</div>
       </div>
     </div>
 
@@ -288,7 +289,7 @@
       </div>
       <div class="card card-blue" style="flex:1">
         <div class="spartan" style="font-size:14px;font-weight:700;color:#fff;margin-bottom:10px">How we scale it</div>
-        <p class="trispace" style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.8;margin:0">OTF scales via our Operator model and SPV structure. The velocity of an angel network with institutional discipline.</p>
+        <p class="trispace" style="font-size:12px;color:rgba(255,255,255,0.85);line-height:1.8;margin:0">OTF scales via our {Ωperator} model and SPV structure. The velocity of an angel network with institutional discipline.</p>
       </div>
     </div>
   </div>
@@ -303,7 +304,7 @@
   <div class="panel-row">
     <div class="panel">
       <div class="panel-title">The market problem</div>
-      <div class="panel-body">€59B in European VC dry powder. Everyone moved earlier. Seed rounds are now bidding wars.</div>
+      <div class="panel-body">€59B in European VC dry powder. Everyone moved earlier. Pre-seed rounds are now bidding wars.</div>
     </div>
     <div class="panel">
       <div class="panel-title">The founder question</div>
@@ -311,15 +312,15 @@
     </div>
     <div class="panel highlight">
       <div class="panel-title">Our answer</div>
-      <div class="panel-body">Elite operators with $1.2B+ raised and 3,000+ hires. Founders invite us in. We are not competing for allocations. We are chosen for them.</div>
+      <div class="panel-body">Elite {Ωperators} with $1.2B+ raised and 3,000+ hires. Founders invite us in. We are not competing for allocations. We are chosen for them.</div>
     </div>
   </div>
 
   <p class="trispace" style="font-size:13px;color:#0A0A0A;line-height:1.8;margin-bottom:0">
-    We do not go wide into the general market. We go wide into the deals our Operators surface first. Access is the filter. Breadth is the strategy.
+    We do not go wide into the general market. We go wide into the deals our {Ωperators} surface first. Access is the filter. Breadth is the strategy.
   </p>
   <p class="trispace" style="font-size:13px;color:#0A0A0A;line-height:1.8;margin-top:16px;max-width:580px">
-    Not only is this not spray and pray, it would also be the wrong question to ask in the first place. The idea of diversification in venture is a misconception. The power law drives return concentration regardless of portfolio size. No matter if you start with 20 assets or 100, if you have high returns, most likely they will be driven by 1-2 assets anyway.
+    Diversification in venture is a misconception. Going wide is not about hedging or spreading risk; it is about maximising the probability that you capture the outlier. The power law drives return concentration regardless of portfolio size. Whether you start with 20 assets or 100, if the fund performs, one or two companies will drive the majority of returns. The strategy is designed to ensure we do not miss the company that makes the fund.
   </p>
 
   <div class="divider"></div>
@@ -352,7 +353,7 @@
         <tr>
           <th>Metric</th>
           <th>Halo (track record)</th>
-          <th style="color:#2563FF">OTF I</th>
+          <th style="color:#2563FF">OTF I (ASSUMPTIONS)</th>
         </tr>
       </thead>
       <tbody>
@@ -374,8 +375,8 @@
 
   <!-- Returns table — corrected math -->
   <div class="card" style="margin-bottom:16px">
-    <div class="trispace" style="font-size:10px;font-weight:600;color:#0A0A0A;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">All we need are these two companies</div>
-    <div class="trispace" style="font-size:12px;color:#0A0A0A;margin-bottom:20px;line-height:1.8">2 outliers out of 80. That is a 2.5% hit rate, exactly in line with industry averages. Everything else is a bonus.</div>
+    <div class="trispace" style="font-size:10px;font-weight:600;color:#0A0A0A;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px">Upside case – All we need are these two companies</div>
+    <div class="trispace" style="font-size:12px;color:#0A0A0A;margin-bottom:20px;line-height:1.8">All we need are these two companies. 2 outliers out of 80. That is a hit rate in line with industry averages. Everything else is a bonus.</div>
     <div style="overflow-x:auto">
       <table style="min-width:540px">
         <thead>
@@ -394,12 +395,12 @@
             <td class="blue-bold">Outlier</td>
             <td>2</td>
             <td>2.5%</td>
-            <td>€5.3B</td>
-            <td class="blue-bold">€95.4m</td>
+            <td>€7B</td>
+            <td class="blue-bold">€113m</td>
             <td>
               <div class="share-wrap">
-                <div class="share-track"><div class="share-fill" style="width:75%;background:#2563FF"></div></div>
-                <span class="share-pct blue">75%</span>
+                <div class="share-track"><div class="share-fill" style="width:79%;background:#2563FF"></div></div>
+                <span class="share-pct blue">79%</span>
               </div>
             </td>
           </tr>
@@ -409,11 +410,11 @@
             <td>3</td>
             <td>3.75%</td>
             <td>€1.0B</td>
-            <td class="spartan" style="font-weight:700">€27.0m</td>
+            <td class="spartan" style="font-weight:700">€25m</td>
             <td>
               <div class="share-wrap">
-                <div class="share-track"><div class="share-fill" style="width:21%;background:#CBD5E1"></div></div>
-                <span class="share-pct muted">21%</span>
+                <div class="share-track"><div class="share-fill" style="width:17%;background:#CBD5E1"></div></div>
+                <span class="share-pct muted">17%</span>
               </div>
             </td>
           </tr>
@@ -423,7 +424,7 @@
             <td>31</td>
             <td>38.75%</td>
             <td>€20M</td>
-            <td class="spartan" style="font-weight:700">€5.6m</td>
+            <td class="spartan" style="font-weight:700">€5m</td>
             <td>
               <div class="share-wrap">
                 <div class="share-track"><div class="share-fill" style="width:4%;background:#CBD5E1"></div></div>
@@ -433,7 +434,7 @@
           </tr>
           <!-- Write-off: 44 -->
           <tr>
-            <td class="muted">Write-off</td>
+            <td class="spartan" style="font-weight:700">Write-off</td>
             <td>44</td>
             <td>55%</td>
             <td>€0</td>
@@ -447,8 +448,8 @@
           </tr>
           <tr class="total-row">
             <td colspan="4" class="total-label">Total gross returns · 0.9% net ownership at exit</td>
-            <td class="total-val">€128m</td>
-            <td class="total-moic">5.3x gross</td>
+            <td class="total-val">€143m</td>
+            <td class="total-moic">4.8x gross</td>
           </tr>
         </tbody>
       </table>
