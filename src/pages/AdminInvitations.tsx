@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Mail, Plus, Trash2, UserPlus, ShieldBan, ShieldCheck, Send } from 'lucide-react';
+import { Mail, Plus, Trash2, UserPlus, ShieldBan, ShieldCheck, Send, Search } from 'lucide-react';
 import { format } from 'date-fns';
 
 type AppRole = 'admin' | 'viewer';
@@ -21,6 +21,8 @@ interface ManagedUser {
   role: AppRole;
   status: UserStatus;
   created_at: string;
+  magic_link_sent_count: number;
+  magic_link_clicked_count: number;
 }
 
 const STATUS_LABEL: Record<UserStatus, string> = {
@@ -46,6 +48,7 @@ export default function AdminInvitations() {
   const [actioningId, setActioningId] = useState<string | null>(null);
   const [actionError, setActionError] = useState('');
   const [manualInviteLink, setManualInviteLink] = useState('');
+  const [search, setSearch] = useState('');
 
   const getFunctionErrorMessage = async (error: unknown) => {
     if (typeof error === 'object' && error !== null) {
@@ -70,7 +73,7 @@ export default function AdminInvitations() {
     try {
       const { data, error } = await supabase
         .from('users')
-        .select('id, user_id, email, full_name, role, status, created_at')
+        .select('id, user_id, email, full_name, role, status, created_at, magic_link_sent_count, magic_link_clicked_count')
         .order('created_at', { ascending: false });
       if (error) {
         setActionError(error.message);
@@ -258,7 +261,14 @@ export default function AdminInvitations() {
 
   const viewers = users.filter((u) => u.role === 'viewer');
   const admins  = users.filter((u) => u.role === 'admin');
-  const tabUsers = activeTab === 'viewers' ? viewers : admins;
+  const baseUsers = activeTab === 'viewers' ? viewers : admins;
+  const searchLower = search.trim().toLowerCase();
+  const tabUsers = searchLower
+    ? baseUsers.filter((u) =>
+        u.email.toLowerCase().includes(searchLower) ||
+        (u.full_name ?? '').toLowerCase().includes(searchLower)
+      )
+    : baseUsers;
 
   const tabs: { key: Tab; label: string; count: number }[] = [
     { key: 'viewers', label: 'Viewers', count: viewers.length },
@@ -343,7 +353,7 @@ export default function AdminInvitations() {
           {tabs.map((tab) => (
             <button
               key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
+              onClick={() => { setActiveTab(tab.key); setSearch(''); }}
               className={`px-5 py-2.5 text-sm font-display font-bold tracking-wide transition-colors border-b-2 -mb-px ${
                 activeTab === tab.key
                   ? 'border-primary text-primary'
@@ -358,9 +368,20 @@ export default function AdminInvitations() {
           ))}
         </div>
 
+        {/* Search */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name or email…"
+            className="pl-10 font-body"
+          />
+        </div>
+
         {/* Column headers */}
         {tabUsers.length > 0 && (
-          <div className="grid grid-cols-[1fr_80px_80px_56px] gap-x-4 px-4 sm:px-5 mb-1">
+          <div className="grid grid-cols-[1fr_80px_80px_88px] gap-x-4 px-4 sm:px-5 mb-1">
             <div className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-wider">User</div>
             <div className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-wider">Status</div>
             <div className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-wider">Invited</div>
@@ -376,7 +397,7 @@ export default function AdminInvitations() {
             return (
               <div
                 key={u.id}
-                className="glass-card px-4 sm:px-5 py-3.5 grid grid-cols-[1fr_80px_80px_56px] gap-x-4 items-center animate-fade-in"
+                className="glass-card px-4 sm:px-5 py-3.5 grid grid-cols-[1fr_80px_80px_88px] gap-x-4 items-center animate-fade-in"
                 style={{ animationDelay: `${i * 40}ms` }}
               >
                 {/* Name / email */}
@@ -387,6 +408,11 @@ export default function AdminInvitations() {
                   </div>
                   {u.full_name && (
                     <div className="text-[11px] text-muted-foreground font-body truncate">{u.email}</div>
+                  )}
+                  {u.role === 'viewer' && (u.magic_link_sent_count > 0 || u.magic_link_clicked_count > 0) && (
+                    <div className="text-[10px] text-muted-foreground font-body mt-0.5">
+                      Sent {u.magic_link_sent_count}× · Opened {u.magic_link_clicked_count}×
+                    </div>
                   )}
                 </div>
 
@@ -402,11 +428,11 @@ export default function AdminInvitations() {
 
                 {/* Actions */}
                 <div className="flex items-center justify-end gap-0.5">
-                  {u.status === 'pending' && (
+                  {(u.status === 'pending' || (u.role === 'viewer' && u.status === 'active')) && (
                     <button
                       onClick={() => handleResend(u)}
                       disabled={isActioning}
-                      title="Resend invitation"
+                      title={u.status === 'pending' ? 'Resend invitation' : 'Resend magic link'}
                       className="p-1.5 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors disabled:opacity-40"
                     >
                       <Send className="h-3.5 w-3.5" />

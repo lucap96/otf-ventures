@@ -8,27 +8,52 @@ export default function MagicAuth() {
 
   useEffect(() => {
     const handleMagicLink = async () => {
-      // Extract tokens from URL hash (present for both invite and magic-link flows)
-      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
-      const accessToken = hashParams.get('access_token');
-      const refreshToken = hashParams.get('refresh_token');
+      const queryParams = new URLSearchParams(window.location.search);
+      const tokenHash = queryParams.get('token_hash');
+      const type = queryParams.get('type');
 
-      if (!accessToken || !refreshToken) {
-        setError('Invalid or expired sign-in link. Request a new one.');
-        return;
+      // token_hash flow: admin-generated manual magic link
+      if (tokenHash && type === 'magiclink') {
+        window.history.replaceState({}, document.title, '/magic-auth');
+        const { data: verifyData, error: verifyError } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: 'magiclink',
+        });
+        if (verifyError) {
+          setError(verifyError.message);
+          return;
+        }
+        // verifyOtp can return success with no session if the token was already used
+        if (!verifyData.session) {
+          const { data: sessionData } = await supabase.auth.getSession();
+          if (!sessionData.session) {
+            setError('Sign-in link is invalid or has already been used. Request a new one.');
+            return;
+          }
+        }
+        await supabase.rpc('increment_magic_link_click');
+      } else {
+        // Extract tokens from URL hash (present for both invite and magic-link flows)
+        const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+        const accessToken = hashParams.get('access_token');
+        const refreshToken = hashParams.get('refresh_token');
+
+        if (!accessToken || !refreshToken) {
+          setError('Invalid or expired sign-in link. Request a new one.');
+          return;
+        }
+
+        const { error: sessionError } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: refreshToken,
+        });
+
+        if (sessionError) {
+          setError(sessionError.message);
+          return;
+        }
+        await supabase.rpc('increment_magic_link_click');
       }
-
-      const { error: sessionError } = await supabase.auth.setSession({
-        access_token: accessToken,
-        refresh_token: refreshToken,
-      });
-
-      if (sessionError) {
-        setError(sessionError.message);
-        return;
-      }
-
-      window.history.replaceState({}, document.title, '/magic-auth');
 
       // Try to activate the pending invitation. This is a no-op for already-active users
       // (claim_invitation_role raises "No pending invitation" which we safely ignore).

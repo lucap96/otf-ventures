@@ -12,12 +12,36 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.1"
   }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
   public: {
     Tables: {
       analytics_events: {
         Row: {
           created_at: string
-          document_id: string | null
           event_type: string
           id: string
           metadata: Json | null
@@ -25,7 +49,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          document_id?: string | null
           event_type: string
           id?: string
           metadata?: Json | null
@@ -33,7 +56,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          document_id?: string | null
           event_type?: string
           id?: string
           metadata?: Json | null
@@ -41,66 +63,42 @@ export type Database = {
         }
         Relationships: []
       }
-      documents: {
-        Row: {
-          content: Json | null
-          created_at: string
-          id: string
-          section: string
-          sort_order: number
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          content?: Json | null
-          created_at?: string
-          id?: string
-          section?: string
-          sort_order?: number
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          content?: Json | null
-          created_at?: string
-          id?: string
-          section?: string
-          sort_order?: number
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       users: {
         Row: {
-          id: string
-          user_id: string | null
+          created_at: string
           email: string
           full_name: string | null
+          id: string
+          invited_by: string | null
+          magic_link_clicked_count: number
+          magic_link_sent_count: number
           role: Database["public"]["Enums"]["app_role"]
           status: Database["public"]["Enums"]["user_status"]
-          invited_by: string | null
-          created_at: string
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          user_id?: string | null
+          created_at?: string
           email: string
           full_name?: string | null
+          id?: string
+          invited_by?: string | null
+          magic_link_clicked_count?: number
+          magic_link_sent_count?: number
           role?: Database["public"]["Enums"]["app_role"]
           status?: Database["public"]["Enums"]["user_status"]
-          invited_by?: string | null
-          created_at?: string
+          user_id?: string | null
         }
         Update: {
-          id?: string
-          user_id?: string | null
+          created_at?: string
           email?: string
           full_name?: string | null
+          id?: string
+          invited_by?: string | null
+          magic_link_clicked_count?: number
+          magic_link_sent_count?: number
           role?: Database["public"]["Enums"]["app_role"]
           status?: Database["public"]["Enums"]["user_status"]
-          invited_by?: string | null
-          created_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
@@ -113,6 +111,10 @@ export type Database = {
         Args: { p_full_name?: string }
         Returns: Database["public"]["Enums"]["app_role"]
       }
+      get_invite_status: {
+        Args: { check_email: string }
+        Returns: Database["public"]["Enums"]["user_status"]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -120,15 +122,9 @@ export type Database = {
         }
         Returns: boolean
       }
-      is_admin: {
-        Args: Record<PropertyKey, never>
-        Returns: boolean
-      }
+      increment_magic_link_click: { Args: never; Returns: undefined }
+      is_admin: { Args: never; Returns: boolean }
       is_invited: { Args: { check_email: string }; Returns: boolean }
-      get_invite_status: {
-        Args: { check_email: string }
-        Returns: Database["public"]["Enums"]["user_status"] | null
-      }
     }
     Enums: {
       app_role: "admin" | "viewer"
@@ -165,13 +161,13 @@ export type Tables<
     : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
         DefaultSchema["Views"])
-  ? (DefaultSchema["Tables"] &
-      DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-      Row: infer R
-    }
-    ? R
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
     : never
-  : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
@@ -191,12 +187,12 @@ export type TablesInsert<
     ? I
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-      Insert: infer I
-    }
-    ? I
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
     : never
-  : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
@@ -216,12 +212,12 @@ export type TablesUpdate<
     ? U
     : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-      Update: infer U
-    }
-    ? U
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
     : never
-  : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
@@ -237,8 +233,8 @@ export type Enums<
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-  : never
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
@@ -254,10 +250,13 @@ export type CompositeTypes<
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-  : never
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       app_role: ["admin", "viewer"],

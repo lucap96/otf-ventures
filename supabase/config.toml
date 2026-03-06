@@ -1,1 +1,18 @@
 project_id = "rbjmwtubzympbfyvbgfs"
+
+[auth]
+site_url = "https://otf.vc/"
+additional_redirect_urls = ["http://localhost:8081/**", "https://dataroom.otf.vc/**", "https://otf.vc/**"]
+
+[auth.email]
+enable_confirmations = true
+max_frequency = "1m0s"
+otp_length = 8
+
+[auth.email.template.magic_link]
+subject = "Your OTF Ventures sign-in link"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
