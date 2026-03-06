@@ -299,19 +299,6 @@ export default function AdminInvitations() {
     setActioningId(u.id);
     setActionError('');
 
-    if (!u.user_id) {
-      const { error } = await supabase.from('users').delete().eq('id', u.id);
-      if (error) {
-        setActionError(error.message);
-        toast.error(error.message);
-      } else {
-        setUsers((prev) => prev.filter((x) => x.id !== u.id));
-        toast.success('Invitation removed.');
-      }
-      setActioningId(null);
-      return;
-    }
-
     const { data: sessionData } = await supabase.auth.getSession();
     const accessToken = sessionData.session?.access_token;
     if (!accessToken) {
