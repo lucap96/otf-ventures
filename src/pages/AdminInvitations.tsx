@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
-import { Mail, Plus, Trash2, UserPlus, ShieldBan, ShieldCheck } from 'lucide-react';
+import { Mail, Plus, Trash2, UserPlus, ShieldBan, ShieldCheck, Send } from 'lucide-react';
 import { format } from 'date-fns';
 
 type AppRole = 'admin' | 'viewer';
@@ -103,7 +103,13 @@ export default function AdminInvitations() {
 
     const { data, error } = await supabase.functions.invoke('send-invitation', {
       headers: { Authorization: `Bearer ${accessToken}` },
-      body: { email: normalizedEmail, role: inviteRole, redirectTo: `${window.location.origin}/accept-invite` },
+      body: {
+        email: normalizedEmail,
+        role: inviteRole,
+        redirectTo: inviteRole === 'viewer'
+          ? `${window.location.origin}/magic-auth`
+          : `${window.location.origin}/accept-invite`,
+      },
     });
 
     if (error) {
@@ -146,6 +152,42 @@ export default function AdminInvitations() {
     } catch {
       toast.error('Unable to copy invite link. Copy it manually.');
     }
+  };
+
+  const handleResend = async (u: ManagedUser) => {
+    setActioningId(u.id);
+    setActionError('');
+    setManualInviteLink('');
+
+    const { data: sessionData } = await supabase.auth.getSession();
+    const accessToken = sessionData.session?.access_token;
+    if (!accessToken) {
+      toast.error('Your session expired. Please sign in again.');
+      setActioningId(null);
+      return;
+    }
+
+    const { data, error } = await supabase.functions.invoke('send-invitation', {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      body: {
+        email: u.email,
+        role: u.role,
+        redirectTo: u.role === 'viewer'
+          ? `${window.location.origin}/magic-auth`
+          : `${window.location.origin}/accept-invite`,
+      },
+    });
+
+    if (error) {
+      const message = await getFunctionErrorMessage(error);
+      toast.error(message);
+    } else if (data?.emailSent === false && typeof data.inviteLink === 'string') {
+      setManualInviteLink(data.inviteLink);
+      toast.warning('Email delivery failed. Share the manual invite link below.');
+    } else {
+      toast.success(`Invitation resent to ${u.email}`);
+    }
+    setActioningId(null);
   };
 
   const handleBlock = async (u: ManagedUser) => {
@@ -360,6 +402,16 @@ export default function AdminInvitations() {
 
                 {/* Actions */}
                 <div className="flex items-center justify-end gap-0.5">
+                  {u.status === 'pending' && (
+                    <button
+                      onClick={() => handleResend(u)}
+                      disabled={isActioning}
+                      title="Resend invitation"
+                      className="p-1.5 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors disabled:opacity-40"
+                    >
+                      <Send className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                   {!isSelf && u.status !== 'pending' && (
                     <button
                       onClick={() => handleBlock(u)}

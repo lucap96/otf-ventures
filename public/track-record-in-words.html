@@ -14,7 +14,7 @@
   h1,h2,h3,.cs-num,.os-num,.section-title,.cover-title,.stat-num { font-family:'League Spartan',sans-serif; }
 
   .page, .cover {
-    width:210mm; min-height:297mm;
+    width:210mm; min-height:auto;
     background:var(--bg);
     padding:44px 52px;
     page-break-after:always;
@@ -26,7 +26,7 @@
   .page::after, .cover::after { content:''; position:absolute; top:-80px; right:-80px; width:280px; height:280px; border-radius:50%; border:1px solid rgba(26,86,219,0.25); pointer-events:none; }
 
   /* COVER */
-  .cover { justify-content:space-between; }
+  .cover { justify-content:space-between; min-height:100vh; }
   .cover-logo { font-family:'League Spartan',sans-serif; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:5px; }
   .cover-sub { font-size:11px; color:var(--gray); letter-spacing:1px; }
   .cover-mid { position:relative; z-index:2; }
@@ -120,7 +120,7 @@
   }
   @media print {
     body { width:210mm; }
-    .cover, .page { page-break-after:always; }
+    .cover, .page { page-break-after:always; min-height:297mm; }
     @page { size:A4; margin:0; }
     .print-btn { display:none; }
   }

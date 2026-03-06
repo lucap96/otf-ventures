@@ -8,6 +8,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import AppLayout from "@/components/AppLayout";
 import Login from "@/pages/Login";
 import AcceptInvite from "@/pages/AcceptInvite";
+import MagicAuth from "@/pages/MagicAuth";
 import ResetPassword from "@/pages/ResetPassword";
 import Index from "@/pages/Index";
 import TrackRecordInWords from "@/pages/TrackRecordInWords";
@@ -19,10 +20,7 @@ import FundModelExitStrategy from "@/pages/FundModelExitStrategy";
 import Sourcing from "@/pages/Sourcing";
 import CommittedDeals2026 from "@/pages/CommittedDeals2026";
 import SourcingCRM from "@/pages/SourcingCRM";
-import LegalFundTerms from "@/pages/LegalFundTerms";
-import LegalSubscriptionAgreement from "@/pages/LegalSubscriptionAgreement";
-import LegalFundStructureSetup from "@/pages/LegalFundStructureSetup";
-import LegalDisclaimer from "@/pages/LegalDisclaimer";
+import Legal from "@/pages/Legal";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminInvitations from "@/pages/AdminInvitations";
 import NotFound from "./pages/NotFound";
@@ -39,6 +37,7 @@ const App = () => (
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/accept-invite" element={<AcceptInvite />} />
+            <Route path="/magic-auth" element={<MagicAuth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/" element={<Index />} />
@@ -51,10 +50,7 @@ const App = () => (
               <Route path="/sourcing" element={<Sourcing />} />
               <Route path="/sourcing/crm" element={<SourcingCRM />} />
               <Route path="/committed-deals-2026" element={<CommittedDeals2026 />} />
-              <Route path="/legals/fund-terms" element={<LegalFundTerms />} />
-              <Route path="/legals/subscription-agreement" element={<LegalSubscriptionAgreement />} />
-              <Route path="/legals/fund-structure-setup" element={<LegalFundStructureSetup />} />
-              <Route path="/legals/disclaimer" element={<LegalDisclaimer />} />
+              <Route path="/legals" element={<Legal />} />
               <Route path="/track-record/in-words" element={<TrackRecordInWords />} />
               <Route path="/admin/analytics" element={<ProtectedRoute adminOnly><AdminAnalytics /></ProtectedRoute>} />
               <Route path="/admin/invitations" element={<ProtectedRoute adminOnly><AdminInvitations /></ProtectedRoute>} />

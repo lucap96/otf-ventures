@@ -85,17 +85,7 @@ const rawNavItems: MenuItem[] = [
   },
   { label: 'Sourcing', icon: Search, linkType: 'native', url: '/sourcing', enabled: true },
   { label: 'Committed deals in 2026', icon: Handshake, linkType: 'native', url: '/committed-deals-2026', enabled: true },
-  {
-    label: 'Legals',
-    icon: Scale,
-    enabled: true,
-    children: [
-      { label: 'Fund Terms', linkType: 'native', url: '/legals/fund-terms', enabled: true },
-      { label: 'Subscription Agreement', linkType: 'native', url: '/legals/subscription-agreement', enabled: true },
-      { label: 'Fund Structure & Setup', linkType: 'native', url: '/legals/fund-structure-setup', enabled: true },
-      { label: 'Disclaimer', linkType: 'native', url: '/legals/disclaimer', enabled: true },
-    ],
-  },
+  { label: 'Legals', icon: Scale, linkType: 'native', url: '/legals', enabled: true },
 ];
 
 const isEnabled = (enabled?: boolean) => enabled !== false;
@@ -217,12 +207,10 @@ export default function AppLayout() {
       '/fund-model/walk-through': 'Model Walkthrough',
       '/fund-model/exit-strategy-liquidity': 'Exit Strategy & Liquidity',
       '/sourcing': 'Sourcing',
+      '/sourcing/crm': 'Sourcing CRM',
       '/track-record/in-words': 'Deals In Words',
       '/committed-deals-2026': 'Committed Deals 2026',
-      '/legals/fund-terms': 'Fund Terms',
-      '/legals/subscription-agreement': 'Subscription Agreement',
-      '/legals/fund-structure-setup': 'Fund Structure & Setup',
-      '/legals/disclaimer': 'Disclaimer',
+      '/legals': 'Legals',
       '/admin/analytics': 'Admin — Analytics',
       '/admin/invitations': 'Admin — Invitations',
     };
@@ -513,7 +501,7 @@ export default function AppLayout() {
                     <div className="min-w-0 flex-1 text-left">
                       <div className="text-[9px] uppercase tracking-[1.3px] text-muted-foreground font-body font-semibold">Account</div>
                       <div className="text-[0.82rem] font-semibold font-body text-foreground truncate leading-[1.2]">{displayName}</div>
-                      <div className="text-[0.74rem] font-body text-muted-foreground/90 truncate">{userEmail}</div>
+                      {fullName.trim() && <div className="text-[0.74rem] font-body text-muted-foreground/90 truncate">{userEmail}</div>}
                     </div>
                     <ChevronsUpDown className="h-4 w-4 shrink-0 text-muted-foreground/80 ml-1" />
                   </div>

@@ -9,6 +9,7 @@ interface AuthContextType {
   loading: boolean;
   roleLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
+  sendMagicLink: (email: string) => Promise<{ error: any }>;
   requestPasswordReset: (email: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -23,7 +24,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [roleLoading, setRoleLoading] = useState(false);
   const lastSessionSignature = useRef<string | null>(null);
 
-  const fetchUserRecord = async (userId: string) => {
+  const fetchUserRecord = async (userId: string, email?: string) => {
     setRoleLoading(true);
     try {
       const result = await Promise.race([
@@ -39,6 +40,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (result.error) {
         console.error('Failed to fetch user record:', result.error);
         return null;
+      }
+      // Not found by user_id — could be a pending viewer whose user_id hasn't been
+      // set yet (claim_invitation_role runs after setSession in MagicAuth). Fall back
+      // to an email lookup so we don't sign them out prematurely.
+      if (!result.data && email) {
+        const emailResult = await supabase
+          .from('users')
+          .select('role, status')
+          .eq('email', email.toLowerCase())
+          .maybeSingle();
+        return emailResult.data ?? null;
       }
       return result.data;
     } catch (error) {
@@ -100,7 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setTimeout(() => {
         if (!mounted) return;
         void (async () => {
-          const record = await fetchUserRecord(capturedSession.user.id);
+          const record = await fetchUserRecord(capturedSession.user.id, capturedSession.user.email ?? undefined);
           if (!mounted) return;
 
           if (!record || record.status === 'blocked') {
@@ -233,6 +245,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: null };
   };
 
+  const sendMagicLink = async (email: string) => {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
+      return { error: { message: 'Please enter your email address.' } };
+    }
+
+    const { data: inviteStatus } = await supabase.rpc('get_invite_status', { check_email: normalizedEmail });
+    if (!inviteStatus) {
+      return { error: { message: 'This email has not been invited. Contact an administrator to request access.' } };
+    }
+    if (inviteStatus === 'blocked') {
+      return { error: { message: 'Your access has been revoked. Please contact an administrator.' } };
+    }
+
+    const { error } = await supabase.auth.signInWithOtp({
+      email: normalizedEmail,
+      options: {
+        shouldCreateUser: false,
+        emailRedirectTo: `${window.location.origin}/magic-auth`,
+      },
+    });
+    return { error };
+  };
+
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -253,7 +289,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, loading, roleLoading, signIn, requestPasswordReset, signOut }}>
+    <AuthContext.Provider value={{ user, session, isAdmin, loading, roleLoading, signIn, sendMagicLink, requestPasswordReset, signOut }}>
       {children}
     </AuthContext.Provider>
   );

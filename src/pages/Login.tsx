@@ -7,7 +7,8 @@ import { Label } from '@/components/ui/label';
 import { Lock, Mail } from 'lucide-react';
 
 export default function Login() {
-  const { user, loading, signIn, requestPasswordReset } = useAuth();
+  const { user, loading, signIn, sendMagicLink, requestPasswordReset } = useAuth();
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(() => {
@@ -15,9 +16,9 @@ export default function Login() {
     if (reason) window.sessionStorage.removeItem('auth:signout_reason');
     return reason;
   });
+  const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
-  const [resetSubmitting, setResetSubmitting] = useState(false);
-  const [resetMessage, setResetMessage] = useState('');
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   if (loading) {
     return (
@@ -27,13 +28,26 @@ export default function Login() {
     );
   }
 
-  // Don't navigate while signIn is in-flight — blocked users are set briefly before signOut fires.
   if (user && !submitting) return <Navigate to="/" replace />;
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleMagicLink = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setResetMessage('');
+    setMessage('');
+    setSubmitting(true);
+    const { error } = await sendMagicLink(email);
+    if (error) {
+      setError(error.message);
+    } else {
+      setMessage('Check your email — a sign-in link is on its way.');
+    }
+    setSubmitting(false);
+  };
+
+  const handlePasswordSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setMessage('');
     setSubmitting(true);
     const { error } = await signIn(email, password);
     if (error) setError(error.message);
@@ -42,16 +56,15 @@ export default function Login() {
 
   const handleResetPassword = async () => {
     setError('');
-    setResetMessage('');
-    setResetSubmitting(true);
+    setMessage('');
+    setSubmitting(true);
     const { error } = await requestPasswordReset(email);
     if (error) {
       setError(error.message);
-      setResetSubmitting(false);
-      return;
+    } else {
+      setMessage('If an account exists for this email, a reset link has been sent.');
     }
-    setResetMessage('If an account exists for this email, a reset link has been sent.');
-    setResetSubmitting(false);
+    setSubmitting(false);
   };
 
   return (
@@ -71,70 +84,127 @@ export default function Login() {
 
         <div className="glass-card p-8">
           <h1 className="font-display text-2xl font-extrabold text-foreground mb-1 tracking-tight">
-            Welcome Back
+            {showPasswordForm ? 'Sign In' : 'Welcome'}
           </h1>
           <p className="text-sm text-muted-foreground mb-8 font-body">
-            Access is by invitation only. Sign in with your credentials.
+            {showPasswordForm
+              ? 'Sign in with your admin credentials.'
+              : 'Access is by invitation only. Enter your email to receive a sign-in link.'}
           </p>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-xs uppercase tracking-wider font-body font-semibold text-muted-foreground">
-                Email
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 font-body"
-                  placeholder="you@example.com"
-                  required
-                />
+          {!showPasswordForm ? (
+            /* Magic link form (default — for viewers) */
+            <form onSubmit={handleMagicLink} className="space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-xs uppercase tracking-wider font-body font-semibold text-muted-foreground">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 font-body"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-xs uppercase tracking-wider font-body font-semibold text-muted-foreground">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 font-body"
-                  placeholder="••••••••"
-                  required
-                />
-              </div>
-              <div className="flex justify-end">
+              {error && <p className="text-sm text-destructive font-body">{error}</p>}
+              {message && <p className="text-sm text-foreground font-body">{message}</p>}
+
+              <Button
+                type="submit"
+                className="w-full font-display font-bold tracking-wider uppercase"
+                disabled={submitting}
+              >
+                {submitting ? 'Sending…' : 'Send Sign-In Link'}
+              </Button>
+
+              <div className="pt-1 text-center">
                 <button
                   type="button"
-                  onClick={handleResetPassword}
-                  className="text-xs font-body text-primary hover:underline disabled:opacity-60"
-                  disabled={resetSubmitting || submitting}
+                  onClick={() => { setError(''); setMessage(''); setShowPasswordForm(true); }}
+                  className="text-xs font-body text-muted-foreground hover:text-primary transition-colors"
                 >
-                  {resetSubmitting ? 'Sending reset link…' : 'Forgot password?'}
+                  Admin? Sign in with password →
                 </button>
               </div>
-            </div>
+            </form>
+          ) : (
+            /* Password form (for admins) */
+            <form onSubmit={handlePasswordSignIn} className="space-y-5">
+              <div className="space-y-2">
+                <Label htmlFor="email-pw" className="text-xs uppercase tracking-wider font-body font-semibold text-muted-foreground">
+                  Email
+                </Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email-pw"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="pl-10 font-body"
+                    placeholder="you@example.com"
+                    required
+                  />
+                </div>
+              </div>
 
-            {error && (
-              <p className="text-sm text-destructive font-body">{error}</p>
-            )}
-            {resetMessage && (
-              <p className="text-sm text-foreground font-body">{resetMessage}</p>
-            )}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-xs uppercase tracking-wider font-body font-semibold text-muted-foreground">
+                  Password
+                </Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10 font-body"
+                    placeholder="••••••••"
+                    required
+                  />
+                </div>
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleResetPassword}
+                    className="text-xs font-body text-primary hover:underline disabled:opacity-60"
+                    disabled={submitting}
+                  >
+                    Forgot password?
+                  </button>
+                </div>
+              </div>
 
-            <Button type="submit" className="w-full font-display font-bold tracking-wider uppercase" disabled={submitting}>
-              {submitting ? 'Signing in…' : 'Sign In'}
-            </Button>
-          </form>
+              {error && <p className="text-sm text-destructive font-body">{error}</p>}
+              {message && <p className="text-sm text-foreground font-body">{message}</p>}
+
+              <Button
+                type="submit"
+                className="w-full font-display font-bold tracking-wider uppercase"
+                disabled={submitting}
+              >
+                {submitting ? 'Signing in…' : 'Sign In'}
+              </Button>
+
+              <div className="pt-1 text-center">
+                <button
+                  type="button"
+                  onClick={() => { setError(''); setMessage(''); setShowPasswordForm(false); }}
+                  className="text-xs font-body text-muted-foreground hover:text-primary transition-colors"
+                >
+                  ← Use magic link instead
+                </button>
+              </div>
+            </form>
+          )}
         </div>
 
         <p className="text-center text-[10px] text-muted-foreground mt-8 tracking-wider font-body">

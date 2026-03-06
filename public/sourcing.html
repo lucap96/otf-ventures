@@ -23,7 +23,7 @@
   .page::after,  .cover::after  { content:''; position:absolute; top:-80px;  right:-80px;  width:280px; height:280px; border-radius:50%; border:1px solid rgba(26,86,219,0.2); pointer-events:none; }
 
   /* ── COVER ── */
-  .cover { justify-content:space-between; }
+  .cover { justify-content:space-between; min-height:100vh; }
   .cover-logo { font-family:'League Spartan',sans-serif; font-size:12px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:var(--blue); margin-bottom:5px; }
   .cover-sub  { font-size:11px; color:var(--gray); letter-spacing:1px; }
   .cover-mid  { position:relative; z-index:2; }
@@ -120,7 +120,7 @@
     <div class="cover-eyebrow">Sourcing</div>
     <div class="cover-title">How We<br><span>Source</span></div>
     <div class="cover-desc">
-      <p>Have a look at a partial copy of our CRM: <a href="/sourcing/crm" target="_blank">open it here</a>.</p>
+      <p>Have a look at a partial copy of our CRM: <a href="/sourcing/crm" target="_top">open it here</a>.</p>
       <p>It is easy to say we have top coverage. We like to simply show it, in our track record, our CRM, and our committed deals. This is also why so many other GPs are investing alongside us.</p>
       <p>Dealflow is no magic. Everyone has access to the same data. Data alone is not the advantage. It is a relationship game and we cracked it.</p>
     </div>
