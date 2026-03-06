@@ -251,22 +251,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: { message: 'Please enter your email address.' } };
     }
 
-    const { data: inviteStatus } = await supabase.rpc('get_invite_status', { check_email: normalizedEmail });
-    if (!inviteStatus) {
-      return { error: { message: 'This email has not been invited. Contact an administrator to request access.' } };
-    }
-    if (inviteStatus === 'blocked') {
-      return { error: { message: 'Your access has been revoked. Please contact an administrator.' } };
-    }
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_KEY as string;
 
-    const { error } = await supabase.auth.signInWithOtp({
-      email: normalizedEmail,
-      options: {
-        shouldCreateUser: false,
-        emailRedirectTo: `${window.location.origin}/magic-auth`,
-      },
-    });
-    return { error };
+    try {
+      const res = await fetch(`${supabaseUrl}/functions/v1/send-magic-link`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', apikey: supabaseKey },
+        body: JSON.stringify({ email: normalizedEmail, origin: window.location.origin }),
+      });
+      const data = await res.json();
+      if (!res.ok) return { error: { message: data.error ?? 'Failed to send sign-in link.' } };
+      return { error: null };
+    } catch {
+      return { error: { message: 'Network error. Please try again.' } };
+    }
   };
 
   const signOut = async () => {
