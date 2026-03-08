@@ -69,7 +69,7 @@ const rawNavItems: MenuItem[] = [
     enabled: true,
     children: [
       { label: 'Our Operators', linkType: 'native', url: '/operators/our-operators', enabled: true },
-      { label: 'How we work together', linkType: 'native', url: '/operators/how-we-work-together', enabled: true },
+      { label: 'How We Work Together', linkType: 'native', url: '/operators/how-we-work-together', enabled: true },
       { label: 'Incentives', linkType: 'native', url: '/operators/operator-incentives', enabled: true },
     ],
   },
@@ -84,7 +84,7 @@ const rawNavItems: MenuItem[] = [
     ],
   },
   { label: 'Sourcing', icon: Search, linkType: 'native', url: '/sourcing', enabled: true },
-  { label: 'Committed deals in 2026', icon: Handshake, linkType: 'native', url: '/committed-deals-2026', enabled: true },
+  { label: 'Committed Deals in 2026', icon: Handshake, linkType: 'native', url: '/committed-deals-2026', enabled: true },
   { label: 'Legals', icon: Scale, linkType: 'native', url: '/legals', enabled: true },
 ];
 

@@ -21,6 +21,9 @@ import Sourcing from "@/pages/Sourcing";
 import CommittedDeals2026 from "@/pages/CommittedDeals2026";
 import SourcingCRM from "@/pages/SourcingCRM";
 import Legal from "@/pages/Legal";
+import LegalFundTerms from "@/pages/LegalFundTerms";
+import LegalSubscriptionAgreement from "@/pages/LegalSubscriptionAgreement";
+import LegalFundStructureSetup from "@/pages/LegalFundStructureSetup";
 import AdminAnalytics from "@/pages/AdminAnalytics";
 import AdminInvitations from "@/pages/AdminInvitations";
 import NotFound from "./pages/NotFound";
@@ -51,6 +54,9 @@ const App = () => (
               <Route path="/sourcing/crm" element={<SourcingCRM />} />
               <Route path="/committed-deals-2026" element={<CommittedDeals2026 />} />
               <Route path="/legals" element={<Legal />} />
+              <Route path="/legals/fund-terms" element={<LegalFundTerms />} />
+              <Route path="/legals/subscription-agreement" element={<LegalSubscriptionAgreement />} />
+              <Route path="/legals/fund-structure-setup" element={<LegalFundStructureSetup />} />
               <Route path="/track-record/in-words" element={<TrackRecordInWords />} />
               <Route path="/admin/analytics" element={<ProtectedRoute adminOnly><AdminAnalytics /></ProtectedRoute>} />
               <Route path="/admin/invitations" element={<ProtectedRoute adminOnly><AdminInvitations /></ProtectedRoute>} />
