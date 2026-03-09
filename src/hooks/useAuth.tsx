@@ -9,7 +9,6 @@ interface AuthContextType {
   loading: boolean;
   roleLoading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: any }>;
-  sendMagicLink: (email: string) => Promise<{ error: any }>;
   requestPasswordReset: (email: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
 }
@@ -216,7 +215,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         return { error: { message: 'This email has not been invited. Contact an administrator to request access.' } };
       }
       if (inviteStatus === 'pending') {
-        return { error: { message: 'You have been invited but have not completed registration yet. Check your email for the invitation link.' } };
+        return { error: { message: 'Your account is pending. Please check your email for your credentials or contact an administrator.' } };
       }
       return { error };
     }
@@ -245,29 +244,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: null };
   };
 
-  const sendMagicLink = async (email: string) => {
-    const normalizedEmail = email.trim().toLowerCase();
-    if (!normalizedEmail) {
-      return { error: { message: 'Please enter your email address.' } };
-    }
-
-    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-    const supabaseKey = import.meta.env.VITE_SUPABASE_KEY as string;
-
-    try {
-      const res = await fetch(`${supabaseUrl}/functions/v1/send-magic-link`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', apikey: supabaseKey },
-        body: JSON.stringify({ email: normalizedEmail, origin: window.location.origin }),
-      });
-      const data = await res.json();
-      if (!res.ok) return { error: { message: data.error ?? 'Failed to send sign-in link.' } };
-      return { error: null };
-    } catch {
-      return { error: { message: 'Network error. Please try again.' } };
-    }
-  };
-
   const signOut = async () => {
     await supabase.auth.signOut();
     setUser(null);
@@ -288,7 +264,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, isAdmin, loading, roleLoading, signIn, sendMagicLink, requestPasswordReset, signOut }}>
+    <AuthContext.Provider value={{ user, session, isAdmin, loading, roleLoading, signIn, requestPasswordReset, signOut }}>
       {children}
     </AuthContext.Provider>
   );

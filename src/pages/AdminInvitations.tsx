@@ -32,6 +32,7 @@ interface ManagedUser {
   created_at: string;
   magic_link_sent_count: number;
   magic_link_clicked_count: number;
+  temp_password: string | null;
 }
 
 const STATUS_LABEL: Record<UserStatus, string> = {
@@ -57,7 +58,7 @@ export default function AdminInvitations() {
   const [submitting, setSubmitting] = useState(false);
   const [actioningId, setActioningId] = useState<string | null>(null);
   const [actionError, setActionError] = useState('');
-  const [manualInviteLink, setManualInviteLink] = useState('');
+  const [tempCredentials, setTempCredentials] = useState<{ email: string; password: string } | null>(null);
   const [search, setSearch] = useState('');
 
   const getFunctionErrorMessage = async (error: unknown) => {
@@ -84,7 +85,7 @@ export default function AdminInvitations() {
       const [usersRes, requestsRes] = await Promise.all([
         supabase
           .from('users')
-          .select('id, user_id, email, full_name, role, status, created_at, magic_link_sent_count, magic_link_clicked_count')
+          .select('id, user_id, email, full_name, role, status, created_at, magic_link_sent_count, magic_link_clicked_count, temp_password')
           .order('created_at', { ascending: false }),
         supabase
           .from('access_requests')
@@ -110,7 +111,7 @@ export default function AdminInvitations() {
     if (!newEmail.trim() || !user) return;
     setSubmitting(true);
     setActionError('');
-    setManualInviteLink('');
+    setTempCredentials(null);
 
     const normalizedEmail = newEmail.trim().toLowerCase();
     const { data: sessionData } = await supabase.auth.getSession();
@@ -128,9 +129,7 @@ export default function AdminInvitations() {
       body: {
         email: normalizedEmail,
         role: inviteRole,
-        redirectTo: inviteRole === 'viewer'
-          ? `${window.location.origin}/magic-auth`
-          : `${window.location.origin}/accept-invite`,
+        loginUrl: `${window.location.origin}/login`,
       },
     });
 
@@ -152,11 +151,11 @@ export default function AdminInvitations() {
     } else {
       const newRecord = { ...data.invitation, role: data.invitation.role ?? inviteRole } as ManagedUser;
       setUsers((prev) => [newRecord, ...prev.filter((u) => u.email !== newRecord.email)]);
-      if (data.emailSent === false && typeof data.inviteLink === 'string') {
-        setManualInviteLink(data.inviteLink);
-        toast.warning('Invite created, but email delivery failed. Share the manual invite link below.');
+      if (data.emailSent === false && typeof data.tempPassword === 'string') {
+        setTempCredentials({ email: normalizedEmail, password: data.tempPassword });
+        toast.warning('Invite created, but email delivery failed. Share the credentials below manually.');
       } else {
-        toast.success(`Invitation sent to ${normalizedEmail}`);
+        toast.success(`Credentials sent to ${normalizedEmail}`);
       }
       setNewEmail('');
       setInviteRole('viewer');
@@ -166,20 +165,21 @@ export default function AdminInvitations() {
     setSubmitting(false);
   };
 
-  const handleCopyManualInviteLink = async () => {
-    if (!manualInviteLink) return;
+  const handleCopyCredentials = async () => {
+    if (!tempCredentials) return;
+    const text = `Email: ${tempCredentials.email}\nPassword: ${tempCredentials.password}`;
     try {
-      await navigator.clipboard.writeText(manualInviteLink);
-      toast.success('Manual invite link copied.');
+      await navigator.clipboard.writeText(text);
+      toast.success('Credentials copied.');
     } catch {
-      toast.error('Unable to copy invite link. Copy it manually.');
+      toast.error('Unable to copy. Copy them manually.');
     }
   };
 
   const handleResend = async (u: ManagedUser) => {
     setActioningId(u.id);
     setActionError('');
-    setManualInviteLink('');
+    setTempCredentials(null);
 
     const { data: sessionData } = await supabase.auth.getSession();
     const accessToken = sessionData.session?.access_token;
@@ -194,20 +194,18 @@ export default function AdminInvitations() {
       body: {
         email: u.email,
         role: u.role,
-        redirectTo: u.role === 'viewer'
-          ? `${window.location.origin}/magic-auth`
-          : `${window.location.origin}/accept-invite`,
+        loginUrl: `${window.location.origin}/login`,
       },
     });
 
     if (error) {
       const message = await getFunctionErrorMessage(error);
       toast.error(message);
-    } else if (data?.emailSent === false && typeof data.inviteLink === 'string') {
-      setManualInviteLink(data.inviteLink);
-      toast.warning('Email delivery failed. Share the manual invite link below.');
+    } else if (data?.emailSent === false && typeof data.tempPassword === 'string') {
+      setTempCredentials({ email: u.email, password: data.tempPassword });
+      toast.warning('Email delivery failed. Share the credentials below manually.');
     } else {
-      toast.success(`Invitation resent to ${u.email}`);
+      toast.success(`New credentials sent to ${u.email}`);
     }
     setActioningId(null);
   };
@@ -230,7 +228,7 @@ export default function AdminInvitations() {
   const handleApproveRequest = async (req: AccessRequest) => {
     setActioningId(req.id);
     setActionError('');
-    setManualInviteLink('');
+    setTempCredentials(null);
 
     const { data: sessionData } = await supabase.auth.getSession();
     const accessToken = sessionData.session?.access_token;
@@ -245,7 +243,7 @@ export default function AdminInvitations() {
       body: {
         email: req.email,
         role: 'viewer',
-        redirectTo: `${window.location.origin}/magic-auth`,
+        loginUrl: `${window.location.origin}/login`,
         ...(req.full_name ? { full_name: req.full_name } : {}),
       },
     });
@@ -267,11 +265,11 @@ export default function AdminInvitations() {
       toast.error(updateError.message);
     } else {
       setRequests((prev) => prev.map((r) => r.id === req.id ? { ...r, status: 'approved' } : r));
-      if (data?.emailSent === false && typeof data.inviteLink === 'string') {
-        setManualInviteLink(data.inviteLink);
-        toast.warning(`Approved. Email failed — share the manual link.`);
+      if (data?.emailSent === false && typeof data.tempPassword === 'string') {
+        setTempCredentials({ email: req.email, password: data.tempPassword });
+        toast.warning(`Approved. Email failed — share the credentials below manually.`);
       } else {
-        toast.success(`Approved and magic link sent to ${req.email}`);
+        toast.success(`Approved and credentials sent to ${req.email}`);
       }
     }
     setActioningId(null);
@@ -417,15 +415,16 @@ export default function AdminInvitations() {
           {actionError && (
             <p className="mt-3 text-sm text-destructive font-body">{actionError}</p>
           )}
-          {manualInviteLink && (
+          {tempCredentials && (
             <div className="mt-4 space-y-2">
-              <Label htmlFor="manual-invite-link" className="text-xs uppercase tracking-wider font-body font-semibold text-muted-foreground">
-                Manual Invite Link
+              <Label className="text-xs uppercase tracking-wider font-body font-semibold text-muted-foreground">
+                Credentials — share securely
               </Label>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <Input id="manual-invite-link" value={manualInviteLink} readOnly className="font-body" />
-                <Button type="button" variant="secondary" onClick={handleCopyManualInviteLink}>Copy Link</Button>
+              <div className="rounded-md bg-muted px-4 py-3 font-body text-sm space-y-1">
+                <div><span className="text-muted-foreground">Email:</span> {tempCredentials.email}</div>
+                <div><span className="text-muted-foreground">Password:</span> <span className="font-mono">{tempCredentials.password}</span></div>
               </div>
+              <Button type="button" variant="secondary" onClick={handleCopyCredentials}>Copy Credentials</Button>
             </div>
           )}
         </form>
@@ -567,9 +566,9 @@ export default function AdminInvitations() {
                   {u.full_name && (
                     <div className="text-[11px] text-muted-foreground font-body truncate">{u.email}</div>
                   )}
-                  {u.role === 'viewer' && (u.magic_link_sent_count > 0 || u.magic_link_clicked_count > 0) && (
-                    <div className="text-[10px] text-muted-foreground font-body mt-0.5">
-                      Sent {u.magic_link_sent_count}× · Opened {u.magic_link_clicked_count}×
+                  {u.temp_password && (
+                    <div className="text-[11px] text-muted-foreground font-body mt-0.5">
+                      pw: <span className="font-mono text-foreground">{u.temp_password}</span>
                     </div>
                   )}
                 </div>
@@ -586,11 +585,11 @@ export default function AdminInvitations() {
 
                 {/* Actions */}
                 <div className="flex items-center justify-end gap-0.5">
-                  {(u.status === 'pending' || (u.role === 'viewer' && u.status === 'active')) && (
+                  {u.status !== 'blocked' && (
                     <button
                       onClick={() => handleResend(u)}
                       disabled={isActioning}
-                      title={u.status === 'pending' ? 'Resend invitation' : 'Resend magic link'}
+                      title="Resend credentials"
                       className="p-1.5 rounded-md text-muted-foreground hover:bg-primary/10 hover:text-primary transition-colors disabled:opacity-40"
                     >
                       <Send className="h-3.5 w-3.5" />

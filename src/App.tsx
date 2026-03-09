@@ -7,8 +7,6 @@ import { AuthProvider } from "@/hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import AppLayout from "@/components/AppLayout";
 import Login from "@/pages/Login";
-import AcceptInvite from "@/pages/AcceptInvite";
-import MagicAuth from "@/pages/MagicAuth";
 import ResetPassword from "@/pages/ResetPassword";
 import Index from "@/pages/Index";
 import TrackRecordInWords from "@/pages/TrackRecordInWords";
@@ -39,8 +37,6 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/login" element={<Login />} />
-            <Route path="/accept-invite" element={<AcceptInvite />} />
-            <Route path="/magic-auth" element={<MagicAuth />} />
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
               <Route path="/" element={<Index />} />
