@@ -58,7 +58,7 @@ export default function Login() {
     if (error) {
       setError(error.message);
     } else {
-      setStatusMessage('If an account exists for this email, a reset link has been sent.');
+      setStatusMessage('If an account exists for this email, your credentials have been sent.');
     }
     setSubmitting(false);
   };

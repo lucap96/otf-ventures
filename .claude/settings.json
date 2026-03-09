@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(supabase functions deploy send-invitation)",
-      "Bash(supabase functions deploy send-invitation --no-verify-jwt)"
+      "Bash(supabase functions deploy send-invitation --no-verify-jwt)",
+      "Bash(supabase functions deploy send-recovery-email --no-verify-jwt)"
     ]
   }
 }

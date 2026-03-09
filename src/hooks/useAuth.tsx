@@ -258,9 +258,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return { error: { message: 'Please enter your email address.' } };
     }
 
-    const redirectTo = `${window.location.origin}/reset-password`;
-    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, { redirectTo });
-    return { error };
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
+    const supabaseKey = import.meta.env.VITE_SUPABASE_KEY as string;
+
+    try {
+      const res = await fetch(`${supabaseUrl}/functions/v1/send-recovery-email`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseKey,
+        },
+        body: JSON.stringify({ email: normalizedEmail, origin: window.location.origin }),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        return { error: { message: body.error ?? 'Failed to send recovery email.' } };
+      }
+
+      return { error: null };
+    } catch {
+      return { error: { message: 'Network error. Please try again.' } };
+    }
   };
 
   return (
